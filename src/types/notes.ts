@@ -1,0 +1,23 @@
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  folderId: string | null;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface Folder {
+  id: string;
+  name: string;
+  createdAt: number;
+}
+
+export interface MediaFile {
+  id: string;
+  name: string;
+  type: string;
+  dataUrl: string;
+  folderId: string | null;
+  noteId: string;
+}
