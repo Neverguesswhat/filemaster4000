@@ -221,5 +221,3 @@ function NoteItem({ note, isActive, onSelect, onDelete, indent = false }: {
     </div>
   );
 }
-
-import type { Note } from '@/types/notes';
