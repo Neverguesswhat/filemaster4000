@@ -35,6 +35,18 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
               onCheckedChange={onToggleConfirmDelete}
             />
           </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <Label htmlFor="confirm-delete-ai" className="flex flex-col gap-1 cursor-pointer">
+              <span className="text-sm font-medium">AI chat delete confirmation</span>
+              <span className="text-xs text-muted-foreground font-normal">Show a confirmation dialog before deleting AI conversations</span>
+            </Label>
+            <Switch
+              id="confirm-delete-ai"
+              checked={confirmDeleteAiChat}
+              onCheckedChange={onToggleConfirmDeleteAiChat}
+            />
+          </div>
         </div>
       </SheetContent>
     </Sheet>

@@ -63,6 +63,8 @@ const Index = () => {
         onClose={() => setSettingsOpen(false)}
         confirmDelete={settings.confirmDelete}
         onToggleConfirmDelete={(v) => updateSetting('confirmDelete', v)}
+        confirmDeleteAiChat={settings.confirmDeleteAiChat}
+        onToggleConfirmDeleteAiChat={(v) => updateSetting('confirmDeleteAiChat', v)}
       />
     </div>
   );
