@@ -176,6 +176,15 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
           onClick={handleImageUpload}
           icon={<ImagePlus className="w-4 h-4" />}
         />
+        <div className="w-px h-5 bg-border mx-1" />
+        <button
+          onClick={handleSummarize}
+          disabled={isSummarizing}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+        >
+          {isSummarizing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+          Summarize
+        </button>
         <input
           ref={fileInputRef}
           type="file"
