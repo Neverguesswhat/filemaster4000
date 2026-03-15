@@ -144,7 +144,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
             )}
             <button
               onClick={onClose}
-              className="p-1.5 rounded-sm text-muted-foreground opacity-70 hover:opacity-100 transition-opacity"
+              className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
