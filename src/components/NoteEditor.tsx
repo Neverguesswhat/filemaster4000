@@ -1,9 +1,11 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
-import { Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Heading1, Heading2, ImagePlus, Minus } from 'lucide-react';
+import { Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Heading1, Heading2, ImagePlus, Minus, Sparkles, X, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import type { Note } from '@/types/notes';
 
 interface Props {
@@ -15,7 +17,33 @@ interface Props {
 
 export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
+  const handleSummarize = useCallback(async () => {
+    if (!note.content || note.content.trim() === '' || note.content === '<p></p>') {
+      toast.error('Add some content to your note first');
+      return;
+    }
+    setIsSummarizing(true);
+    setSummary(null);
+    try {
+      const { data, error } = await supabase.functions.invoke('summarize-note', {
+        body: { content: note.content, title: note.title },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast.error(data.error);
+      } else {
+        setSummary(data.summary);
+      }
+    } catch (e) {
+      console.error('Summarize error:', e);
+      toast.error('Failed to summarize note');
+    } finally {
+      setIsSummarizing(false);
+    }
+  }, [note.content, note.title]);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -148,6 +176,15 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
           onClick={handleImageUpload}
           icon={<ImagePlus className="w-4 h-4" />}
         />
+        <div className="w-px h-5 bg-border mx-1" />
+        <button
+          onClick={handleSummarize}
+          disabled={isSummarizing}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+        >
+          {isSummarizing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+          Summarize
+        </button>
         <input
           ref={fileInputRef}
           type="file"
@@ -156,6 +193,29 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
           className="hidden"
         />
       </div>
+
+      {/* AI Summary */}
+      {(summary || isSummarizing) && (
+        <div className="mx-6 mt-4 p-4 rounded-lg border border-primary/20 bg-primary/5 relative">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wide">AI Summary</span>
+            {!isSummarizing && (
+              <button onClick={() => setSummary(null)} className="ml-auto p-0.5 rounded hover:bg-primary/10 text-muted-foreground hover:text-foreground transition-colors">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          {isSummarizing ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Generating summary…</span>
+            </div>
+          ) : (
+            <p className="text-sm text-foreground leading-relaxed">{summary}</p>
+          )}
+        </div>
+      )}
 
       {/* Editor area */}
       <div className="flex-1 overflow-y-auto">

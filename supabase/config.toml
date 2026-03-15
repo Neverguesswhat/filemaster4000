@@ -1,0 +1,4 @@
+project_id = "mcwofdxrmlxjiyvrjnrs"
+
+[functions.summarize-note]
+verify_jwt = false
