@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
-import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown } from 'lucide-react';
+import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings } from 'lucide-react';
 import type { Folder as FolderType, Note } from '@/types/notes';
 import { DeleteFolderDialog } from './DeleteFolderDialog';
+import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 
 interface Props {
   folders: FolderType[];
