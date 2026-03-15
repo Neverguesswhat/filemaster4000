@@ -129,7 +129,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
           destructive
         />
         <div className="w-px h-5 bg-border mx-0.5" />
-        {/* Delete table */}
+        {/* Delete table: 🗑 */}
         <MenuButton
           onClick={handleDeleteTable}
           icon={<Trash2 className="w-4 h-4" />}
