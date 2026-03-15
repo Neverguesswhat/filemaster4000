@@ -183,7 +183,7 @@ export function FolderSidebar({
                   note={note}
                   isActive={note.id === activeNoteId}
                   onSelect={onSelectNote}
-                  onDelete={onDeleteNote}
+                  onDelete={handleDeleteNote}
                   depth={0}
                 />
               ))}
