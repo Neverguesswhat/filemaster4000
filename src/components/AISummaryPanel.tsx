@@ -102,6 +102,15 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     }
   }, [followUp, summary, conversation, noteContent, noteTitle]);
 
+  const handleDelete = useCallback(async () => {
+    if (!conversationId) return;
+    await supabase.from('ai_conversations').delete().eq('id', conversationId);
+    setConversationId(null);
+    setConversation([]);
+    onClearSummary();
+    toast.success('AI conversation deleted');
+  }, [conversationId, onClearSummary]);
+
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
