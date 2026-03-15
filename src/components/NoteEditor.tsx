@@ -14,6 +14,7 @@ interface Props {
   onUpdateTitle: (title: string) => void;
   onUpdateContent: (content: string) => void;
   onAddMedia: (file: File) => Promise<string>;
+  confirmDeleteAiChat: boolean;
 }
 
 export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }: Props) {
