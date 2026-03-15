@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect } from 'react';
 import { Sparkles, X, Loader2, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ConversationItem {
   question: string;
@@ -9,6 +11,7 @@ interface ConversationItem {
 }
 
 interface Props {
+  open: boolean;
   summary: string | null;
   isSummarizing: boolean;
   noteContent: string;
@@ -18,7 +21,7 @@ interface Props {
   onSummaryLoaded: (summary: string) => void;
 }
 
-export function AISummaryPanel({ summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded }: Props) {
+export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded }: Props) {
   const [followUp, setFollowUp] = useState('');
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [isAsking, setIsAsking] = useState(false);
@@ -97,62 +100,77 @@ export function AISummaryPanel({ summary, isSummarizing, noteContent, noteTitle,
     }
   }, [followUp, summary, conversation, noteContent, noteTitle]);
 
-  if (!summary && !isSummarizing) return null;
-
   return (
-    <div className="mx-6 mt-4 p-4 rounded-lg border border-primary/20 bg-primary/5">
-      <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="w-4 h-4 text-primary" />
-        <span className="text-xs font-semibold text-primary uppercase tracking-wide">AI Summary</span>
-        {!isSummarizing && (
-          <button onClick={onClose} className="ml-auto p-0.5 rounded hover:bg-primary/10 text-muted-foreground hover:text-foreground transition-colors">
-            <X className="w-3.5 h-3.5" />
-          </button>
-        )}
-      </div>
+    <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
+        <SheetHeader className="px-5 py-4 border-b border-border">
+          <SheetTitle className="flex items-center gap-2 text-sm">
+            <Sparkles className="w-4 h-4 text-primary" />
+            AI Summary
+          </SheetTitle>
+        </SheetHeader>
 
-      {isSummarizing ? (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Generating summary…</span>
-        </div>
-      ) : (
-        <>
-          <p className="text-sm text-foreground leading-relaxed">{summary}</p>
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="px-5 py-4 space-y-4">
+            {isSummarizing ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Generating summary…</span>
+              </div>
+            ) : summary ? (
+              <>
+                <div className="rounded-lg bg-primary/5 border border-primary/10 p-3">
+                  <p className="text-sm text-foreground leading-relaxed">{summary}</p>
+                </div>
 
-          {conversation.map((item, i) => (
-            <div key={i} className="mt-3 space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">You: {item.question}</p>
-              <p className="text-sm text-foreground leading-relaxed">{item.answer}</p>
-            </div>
-          ))}
+                {conversation.map((item, i) => (
+                  <div key={i} className="space-y-2">
+                    <div className="flex justify-end">
+                      <div className="rounded-lg bg-accent px-3 py-2 max-w-[85%]">
+                        <p className="text-sm text-foreground">{item.question}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-lg bg-primary/5 border border-primary/10 p-3">
+                      <p className="text-sm text-foreground leading-relaxed">{item.answer}</p>
+                    </div>
+                  </div>
+                ))}
 
-          {isAsking && (
-            <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              <span>Thinking…</span>
-            </div>
-          )}
-
-          <div className="mt-3 flex items-center gap-2">
-            <input
-              value={followUp}
-              onChange={e => setFollowUp(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleAsk()}
-              placeholder="Ask a follow-up question…"
-              disabled={isAsking}
-              className="flex-1 text-sm bg-background border border-border rounded-md px-3 py-1.5 outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground/50 disabled:opacity-50"
-            />
-            <button
-              onClick={handleAsk}
-              disabled={isAsking || !followUp.trim()}
-              className="p-1.5 rounded-md text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
-            >
-              <Send className="w-4 h-4" />
-            </button>
+                {isAsking && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Thinking…</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">Click "Summarize" in the toolbar to generate a summary.</p>
+            )}
           </div>
-        </>
-      )}
-    </div>
+        </ScrollArea>
+
+        {summary && !isSummarizing && (
+          <div className="border-t border-border px-4 py-3">
+            <div className="flex items-center gap-2">
+              <input
+                value={followUp}
+                onChange={e => setFollowUp(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleAsk()}
+                placeholder="Ask a follow-up…"
+                disabled={isAsking}
+                className="flex-1 text-sm bg-background border border-border rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-ring placeholder:text-muted-foreground/50 disabled:opacity-50"
+              />
+              <button
+                onClick={handleAsk}
+                disabled={isAsking || !followUp.trim()}
+                className="p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }

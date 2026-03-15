@@ -20,6 +20,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   const handleSummarize = useCallback(async () => {
     if (!note.content || note.content.trim() === '' || note.content === '<p></p>') {
@@ -28,6 +29,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
     }
     setIsSummarizing(true);
     setSummary(null);
+    setAiPanelOpen(true);
     try {
       const { data, error } = await supabase.functions.invoke('summarize-note', {
         body: { content: note.content, title: note.title },
@@ -179,12 +181,12 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
         />
         <div className="w-px h-5 bg-border mx-1" />
         <button
-          onClick={handleSummarize}
+          onClick={() => { summary ? setAiPanelOpen(true) : handleSummarize(); }}
           disabled={isSummarizing}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
         >
           {isSummarizing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-          Summarize
+          {summary ? 'AI Summary' : 'Summarize'}
         </button>
         <input
           ref={fileInputRef}
@@ -196,12 +198,13 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
       </div>
 
       <AISummaryPanel
+        open={aiPanelOpen}
         summary={summary}
         isSummarizing={isSummarizing}
         noteContent={note.content}
         noteTitle={note.title}
         noteId={note.id}
-        onClose={() => setSummary(null)}
+        onClose={() => setAiPanelOpen(false)}
         onSummaryLoaded={(s) => setSummary(s)}
       />
 
