@@ -112,16 +112,47 @@
 }
 
 .tiptap-editor .ProseMirror table {
-  @apply border-collapse w-full my-4 rounded-lg overflow-hidden;
+  @apply w-full my-4 overflow-hidden;
+  border-spacing: 0;
+  border-collapse: separate;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.5rem;
 }
 
 .tiptap-editor .ProseMirror table td,
 .tiptap-editor .ProseMirror table th {
-  @apply border border-border px-3 py-2 text-sm align-top min-w-[80px];
+  @apply px-3 py-2 text-sm align-top min-w-[80px];
+  border-right: 1px solid hsl(var(--border));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.tiptap-editor .ProseMirror table td:last-child,
+.tiptap-editor .ProseMirror table th:last-child {
+  border-right: none;
+}
+
+.tiptap-editor .ProseMirror table tr:last-child td {
+  border-bottom: none;
 }
 
 .tiptap-editor .ProseMirror table th {
   @apply bg-muted font-semibold text-left;
+}
+
+.tiptap-editor .ProseMirror table tr:first-child th:first-child {
+  border-top-left-radius: calc(0.5rem - 1px);
+}
+
+.tiptap-editor .ProseMirror table tr:first-child th:last-child {
+  border-top-right-radius: calc(0.5rem - 1px);
+}
+
+.tiptap-editor .ProseMirror table tr:last-child td:first-child {
+  border-bottom-left-radius: calc(0.5rem - 1px);
+}
+
+.tiptap-editor .ProseMirror table tr:last-child td:last-child {
+  border-bottom-right-radius: calc(0.5rem - 1px);
 }
 
 .tiptap-editor .ProseMirror table td {
