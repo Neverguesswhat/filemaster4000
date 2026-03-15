@@ -135,7 +135,7 @@ export function useNotes() {
 
   const createNote = useCallback(async (folderId: string | null = null) => {
     const { data, error } = await supabase.from('notes').insert({
-      title: 'Untitled',
+      title: '',
       content: '',
       folder_id: folderId,
     }).select().single();
