@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Image from '@tiptap/extension-image';
+import ImageResize from 'tiptap-extension-resize-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
@@ -68,7 +68,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image.configure({ inline: false, allowBase64: true }),
+      ImageResize.configure({ minWidth: 50, maxWidth: 800 }),
       Placeholder.configure({ placeholder: 'Start writing...' }),
       Table.configure({ resizable: true }),
       TableRow,
@@ -132,7 +132,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
     if (!file || !editor) return;
     const dataUrl = await onAddMedia(file);
     if (file.type.startsWith('image/')) {
-      editor.chain().focus().setImage({ src: dataUrl, alt: file.name }).run();
+      (editor.chain().focus() as any).setImage({ src: dataUrl, alt: file.name }).run();
     }
     e.target.value = '';
   }, [editor, onAddMedia]);
