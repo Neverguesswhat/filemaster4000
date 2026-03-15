@@ -3,10 +3,11 @@ import { useState, useCallback, useEffect } from 'react';
 interface AppSettings {
   confirmDelete: boolean;
   confirmDeleteAiChat: boolean;
+  confirmDeleteTable: boolean;
 }
 
 const STORAGE_KEY = 'app-settings';
-const defaults: AppSettings = { confirmDelete: true, confirmDeleteAiChat: true };
+const defaults: AppSettings = { confirmDelete: true, confirmDeleteAiChat: true, confirmDeleteTable: true };
 
 export function useSettings() {
   const [settings, setSettings] = useState<AppSettings>(() => {
