@@ -215,6 +215,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
         onClose={() => setAiPanelOpen(false)}
         onSummaryLoaded={(s) => setSummary(s)}
         onClearSummary={() => setSummary(null)}
+        confirmDeleteAiChat={confirmDeleteAiChat}
       />
 
       {/* Editor area */}
