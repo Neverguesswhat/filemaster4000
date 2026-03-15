@@ -103,7 +103,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
           label="Move row down"
         />
         <div className="w-px h-5 bg-border mx-0.5" />
-        {/* Add / remove rows */}
+        {/* Add / remove rows: +row, −row */}
         <MenuButton
           onClick={() => editor.chain().focus().addRowAfter().run()}
           icon={<Plus className="w-4 h-4" />}
