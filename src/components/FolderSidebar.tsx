@@ -228,6 +228,22 @@ export function FolderSidebar({
           onKeepSelected={(ids) => { onDeleteFolderKeep(deletingFolder.id, ids); setDeletingFolder(null); }}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={!!confirmDeleteNote}
+        title={`Delete "${confirmDeleteNote?.title || 'Untitled'}"?`}
+        description="This note will be permanently deleted. This action cannot be undone."
+        onConfirm={() => { if (confirmDeleteNote) onDeleteNote(confirmDeleteNote.id); setConfirmDeleteNote(null); }}
+        onCancel={() => setConfirmDeleteNote(null)}
+      />
+
+      <ConfirmDeleteDialog
+        open={!!confirmDeleteEmptyFolder}
+        title={`Delete "${confirmDeleteEmptyFolder?.name}"?`}
+        description="This empty folder will be permanently deleted."
+        onConfirm={() => { if (confirmDeleteEmptyFolder) onDeleteFolderAll(confirmDeleteEmptyFolder.id); setConfirmDeleteEmptyFolder(null); }}
+        onCancel={() => setConfirmDeleteEmptyFolder(null)}
+      />
     </>
   );
 }
