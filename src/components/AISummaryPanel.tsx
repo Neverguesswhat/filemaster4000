@@ -124,6 +124,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
   }, [confirmDeleteAiChat, executeDelete]);
 
   return (
+    <>
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
         <SheetHeader className="px-5 py-4 border-b border-border">
