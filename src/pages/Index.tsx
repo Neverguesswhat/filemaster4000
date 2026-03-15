@@ -47,6 +47,7 @@ const Index = () => {
           onUpdateTitle={(title) => updateNote(activeNote.id, { title })}
           onUpdateContent={(content) => updateNote(activeNote.id, { content })}
           onAddMedia={(file) => addMedia(file)}
+          confirmDeleteAiChat={settings.confirmDeleteAiChat}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center">

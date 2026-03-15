@@ -3,6 +3,7 @@ import { Sparkles, X, Loader2, Send, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ConversationItem {
@@ -20,13 +21,15 @@ interface Props {
   onClose: () => void;
   onSummaryLoaded: (summary: string) => void;
   onClearSummary: () => void;
+  confirmDeleteAiChat: boolean;
 }
 
-export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded, onClearSummary }: Props) {
+export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded, onClearSummary, confirmDeleteAiChat }: Props) {
   const [followUp, setFollowUp] = useState('');
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [isAsking, setIsAsking] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Reset and load existing conversation for this note
   useEffect(() => {
@@ -102,16 +105,26 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     }
   }, [followUp, summary, conversation, noteContent, noteTitle]);
 
-  const handleDelete = useCallback(async () => {
+  const executeDelete = useCallback(async () => {
     if (!conversationId) return;
     await supabase.from('ai_conversations').delete().eq('id', conversationId);
     setConversationId(null);
     setConversation([]);
     onClearSummary();
+    setShowDeleteConfirm(false);
     toast.success('AI conversation deleted');
   }, [conversationId, onClearSummary]);
 
+  const handleDelete = useCallback(() => {
+    if (confirmDeleteAiChat) {
+      setShowDeleteConfirm(true);
+    } else {
+      executeDelete();
+    }
+  }, [confirmDeleteAiChat, executeDelete]);
+
   return (
+    <>
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
         <SheetHeader className="px-5 py-4 border-b border-border">
@@ -194,5 +207,14 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         )}
       </SheetContent>
     </Sheet>
+
+    <ConfirmDeleteDialog
+      open={showDeleteConfirm}
+      title="Delete AI conversation"
+      description="Are you sure you want to delete this AI conversation? This action cannot be undone."
+      onConfirm={executeDelete}
+      onCancel={() => setShowDeleteConfirm(false)}
+    />
+    </>
   );
 }
