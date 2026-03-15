@@ -27,8 +27,12 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
   const [isAsking, setIsAsking] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
 
-  // Load existing conversation for this note
+  // Reset and load existing conversation for this note
   useEffect(() => {
+    // Immediately reset state to prevent showing stale data from another note
+    setConversationId(null);
+    setConversation([]);
+
     const loadConversation = async () => {
       const { data, error } = await supabase
         .from('ai_conversations')
@@ -42,9 +46,6 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         setConversationId(data.id);
         setConversation((data.conversation as unknown as ConversationItem[]) || []);
         onSummaryLoaded(data.summary);
-      } else {
-        setConversationId(null);
-        setConversation([]);
       }
     };
     loadConversation();
