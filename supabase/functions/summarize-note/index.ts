@@ -9,8 +9,8 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { content, title } = await req.json();
-    
+    const { content, title, followUp, currentSummary } = await req.json();
+
     if (!content || content.trim().length === 0) {
       return new Response(JSON.stringify({ error: "Note has no content to summarize." }), {
         status: 400,
@@ -21,6 +21,28 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    const messages: { role: string; content: string }[] = [];
+
+    if (followUp && currentSummary) {
+      messages.push({
+        role: "system",
+        content: "You are a concise note summarizer. The user has a note and you previously generated a summary. The user is now asking a follow-up question to refine or explore the summary further. Answer concisely in 2-5 sentences based on the note content. Do not use markdown formatting.",
+      });
+      messages.push({
+        role: "user",
+        content: `Note Title: ${title}\n\nNote Content:\n${content}\n\nPrevious Summary:\n${currentSummary}\n\nUser Question: ${followUp}`,
+      });
+    } else {
+      messages.push({
+        role: "system",
+        content: "You are a concise note summarizer. Given a note's title and content (which may contain HTML), produce a clear, helpful summary in 2-4 sentences. Focus on the key points and actionable items. Do not use markdown formatting.",
+      });
+      messages.push({
+        role: "user",
+        content: `Title: ${title}\n\nContent:\n${content}`,
+      });
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -29,16 +51,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content: "You are a concise note summarizer. Given a note's title and content (which may contain HTML), produce a clear, helpful summary in 2-4 sentences. Focus on the key points and actionable items. Do not use markdown formatting.",
-          },
-          {
-            role: "user",
-            content: `Title: ${title}\n\nContent:\n${content}`,
-          },
-        ],
+        messages,
       }),
     });
 
