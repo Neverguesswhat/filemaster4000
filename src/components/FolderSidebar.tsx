@@ -37,6 +37,8 @@ export function FolderSidebar({
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [deletingFolder, setDeletingFolder] = useState<FolderType | null>(null);
+  const [confirmDeleteNote, setConfirmDeleteNote] = useState<Note | null>(null);
+  const [confirmDeleteEmptyFolder, setConfirmDeleteEmptyFolder] = useState<FolderType | null>(null);
 
   const toggleFolder = (id: string) => {
     setExpandedFolders(prev => {
