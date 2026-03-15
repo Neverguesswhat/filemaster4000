@@ -133,6 +133,8 @@ export function FolderSidebar({
               activeNoteId={activeNoteId}
               getNotesByFolder={getNotesByFolder}
               getChildFolders={getChildFolders}
+              getDescendantFolderIds={getDescendantFolderIds}
+              allFolders={folders}
               onToggle={toggleFolder}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
@@ -207,7 +209,7 @@ export function FolderSidebar({
 // Recursive folder component
 function FolderItem({
   folder, depth, expandedFolders, dragOverFolder, activeNoteId,
-  getNotesByFolder, getChildFolders,
+  getNotesByFolder, getChildFolders, getDescendantFolderIds, allFolders,
   onToggle, onDrop, onDragOver, onDragLeave,
   onCreateNote, onDeleteFolder, onSelectNote, onDeleteNote,
 }: {
@@ -218,6 +220,8 @@ function FolderItem({
   activeNoteId: string | null;
   getNotesByFolder: (id: string) => Note[];
   getChildFolders: (parentId: string | null) => FolderType[];
+  getDescendantFolderIds: (folderId: string, allFolders: FolderType[]) => string[];
+  allFolders: FolderType[];
   onToggle: (id: string) => void;
   onDrop: (e: React.DragEvent, folderId: string | null) => void;
   onDragOver: (e: React.DragEvent, folderId: string | null) => void;
@@ -232,6 +236,12 @@ function FolderItem({
   const isExpanded = expandedFolders.has(folder.id);
   const isDragOver = dragOverFolder === folder.id;
   const paddingLeft = 12 + depth * 16;
+
+  // Count all descendant subfolders
+  const allDescendantIds = getDescendantFolderIds(folder.id, allFolders);
+  const totalSubfolders = allDescendantIds.length;
+  // Count all files across this folder + all descendant folders
+  const totalFiles = [folder.id, ...allDescendantIds].reduce((sum, fid) => sum + getNotesByFolder(fid).length, 0);
 
   return (
     <div>
@@ -261,7 +271,16 @@ function FolderItem({
           <Folder className="w-4 h-4 text-muted-foreground shrink-0" />
         )}
         <span className="text-sm text-foreground truncate flex-1">{folder.name}</span>
-        <span className="text-xs text-muted-foreground">{folderNotes.length}</span>
+        <div className="flex items-center gap-1 shrink-0">
+          {totalSubfolders > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-medium rounded-full bg-accent text-muted-foreground" title={`${totalSubfolders} subfolder${totalSubfolders > 1 ? 's' : ''}`}>
+              {totalSubfolders}
+            </span>
+          )}
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-medium rounded-full bg-primary/10 text-primary" title={`${totalFiles} file${totalFiles !== 1 ? 's' : ''}`}>
+            {totalFiles}
+          </span>
+        </div>
         <button
           onClick={e => { e.stopPropagation(); onCreateNote(folder.id); }}
           className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-primary transition-opacity"
@@ -290,6 +309,8 @@ function FolderItem({
               activeNoteId={activeNoteId}
               getNotesByFolder={getNotesByFolder}
               getChildFolders={getChildFolders}
+              getDescendantFolderIds={getDescendantFolderIds}
+              allFolders={allFolders}
               onToggle={onToggle}
               onDrop={onDrop}
               onDragOver={onDragOver}
