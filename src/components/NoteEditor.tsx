@@ -17,7 +17,33 @@ interface Props {
 
 export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [summary, setSummary] = useState<string | null>(null);
+  const [isSummarizing, setIsSummarizing] = useState(false);
 
+  const handleSummarize = useCallback(async () => {
+    if (!note.content || note.content.trim() === '' || note.content === '<p></p>') {
+      toast.error('Add some content to your note first');
+      return;
+    }
+    setIsSummarizing(true);
+    setSummary(null);
+    try {
+      const { data, error } = await supabase.functions.invoke('summarize-note', {
+        body: { content: note.content, title: note.title },
+      });
+      if (error) throw error;
+      if (data?.error) {
+        toast.error(data.error);
+      } else {
+        setSummary(data.summary);
+      }
+    } catch (e) {
+      console.error('Summarize error:', e);
+      toast.error('Failed to summarize note');
+    } finally {
+      setIsSummarizing(false);
+    }
+  }, [note.content, note.title]);
   const editor = useEditor({
     extensions: [
       StarterKit,
