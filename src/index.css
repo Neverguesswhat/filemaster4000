@@ -105,6 +105,21 @@
 
 .tiptap-editor .ProseMirror img {
   @apply rounded-lg max-w-full my-4;
+  aspect-ratio: attr(width) / attr(height);
+}
+
+/* Resizable image container */
+.tiptap-editor .ProseMirror .image-resizer {
+  display: inline-flex;
+  position: relative;
+  max-width: 100%;
+}
+
+.tiptap-editor .ProseMirror .image-resizer img {
+  @apply rounded-lg;
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
 }
 
 .tiptap-editor .ProseMirror hr {
