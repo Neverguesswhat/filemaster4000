@@ -94,36 +94,37 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
         {/* Row movement */}
         <MenuButton
           onClick={() => moveRowUp(editor)}
-          icon={<ArrowUp className="w-3.5 h-3.5" />}
+          icon={<ArrowUp className="w-4 h-4" />}
           label="Move row up"
         />
         <MenuButton
           onClick={() => moveRowDown(editor)}
-          icon={<ArrowDown className="w-3.5 h-3.5" />}
+          icon={<ArrowDown className="w-4 h-4" />}
           label="Move row down"
         />
         <div className="w-px h-5 bg-border mx-0.5" />
         {/* Add / remove rows */}
         <MenuButton
           onClick={() => editor.chain().focus().addRowAfter().run()}
-          icon={<><Plus className="w-3 h-3" /><Rows3 className="w-3.5 h-3.5" /></>}
+          icon={<Plus className="w-4 h-4" />}
           label="Add row"
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteRow().run()}
-          icon={<><Minus className="w-3 h-3" /><Rows3 className="w-3.5 h-3.5" /></>}
+          icon={<Minus className="w-4 h-4" />}
           label="Delete row"
           destructive
         />
+        <div className="w-px h-5 bg-border mx-0.5" />
         {/* Add / remove columns */}
         <MenuButton
           onClick={() => editor.chain().focus().addColumnAfter().run()}
-          icon={<><Plus className="w-3 h-3" /><Columns3 className="w-3.5 h-3.5" /></>}
+          icon={<Plus className="w-4 h-4" />}
           label="Add column"
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteColumn().run()}
-          icon={<><Minus className="w-3 h-3" /><Columns3 className="w-3.5 h-3.5" /></>}
+          icon={<Minus className="w-4 h-4" />}
           label="Delete column"
           destructive
         />
@@ -131,7 +132,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
         {/* Delete table */}
         <MenuButton
           onClick={handleDeleteTable}
-          icon={<Trash2 className="w-3.5 h-3.5" />}
+          icon={<Trash2 className="w-4 h-4" />}
           label="Delete table"
           destructive
         />
