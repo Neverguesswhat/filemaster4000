@@ -10,6 +10,7 @@ export interface Note {
 export interface Folder {
   id: string;
   name: string;
+  parentId: string | null;
   createdAt: number;
 }
 
