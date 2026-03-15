@@ -309,6 +309,8 @@ function FolderItem({
               activeNoteId={activeNoteId}
               getNotesByFolder={getNotesByFolder}
               getChildFolders={getChildFolders}
+              getDescendantFolderIds={getDescendantFolderIds}
+              allFolders={allFolders}
               onToggle={onToggle}
               onDrop={onDrop}
               onDragOver={onDragOver}
