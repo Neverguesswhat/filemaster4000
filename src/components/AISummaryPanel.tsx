@@ -61,6 +61,9 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         setConversation(loadedConversation);
         onSummaryLoaded(data.summary);
         lastSavedSignatureRef.current = `${noteId}::${data.summary}::${JSON.stringify(loadedConversation)}`;
+        loadedRef.current = true;
+      } else {
+        loadedRef.current = true;
       }
     };
 
