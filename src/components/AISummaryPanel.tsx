@@ -78,10 +78,25 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
 
       if (conversationId) {
         await supabase.from('ai_conversations').update(payload).eq('id', conversationId);
-      } else {
-        const { data } = await supabase.from('ai_conversations').insert([payload]).select().single();
-        if (data) setConversationId(data.id);
+        return;
       }
+
+      const { data: existing } = await supabase
+        .from('ai_conversations')
+        .select('id')
+        .eq('note_id', noteId)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existing?.id) {
+        await supabase.from('ai_conversations').update(payload).eq('id', existing.id);
+        setConversationId(existing.id);
+        return;
+      }
+
+      const { data } = await supabase.from('ai_conversations').insert([payload]).select().single();
+      if (data) setConversationId(data.id);
     };
     save();
   }, [summary, conversation, noteId, conversationId]);
