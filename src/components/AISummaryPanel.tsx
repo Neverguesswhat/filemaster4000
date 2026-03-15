@@ -51,17 +51,18 @@ export function AISummaryPanel({ summary, isSummarizing, noteContent, noteTitle,
   useEffect(() => {
     if (!summary) return;
     const save = async () => {
+      const convJson = JSON.parse(JSON.stringify(conversation));
       const payload = {
         note_id: noteId,
         summary,
-        conversation: conversation as unknown as Record<string, unknown>[],
+        conversation: convJson,
         updated_at: new Date().toISOString(),
       };
 
       if (conversationId) {
         await supabase.from('ai_conversations').update(payload).eq('id', conversationId);
       } else {
-        const { data } = await supabase.from('ai_conversations').insert(payload).select().single();
+        const { data } = await supabase.from('ai_conversations').insert([payload]).select().single();
         if (data) setConversationId(data.id);
       }
     };
