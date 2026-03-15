@@ -159,7 +159,7 @@ function MenuButton({ onClick, icon, label, destructive }: { onClick: () => void
       title={label}
       className={`p-1.5 rounded-md transition-colors flex items-center gap-0.5 ${
         destructive
-          ? 'text-destructive hover:bg-destructive/10'
+          ? 'text-destructive hover:bg-destructive/10 font-medium'
           : 'text-muted-foreground hover:text-foreground hover:bg-accent'
       }`}
     >
