@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { useNotes } from '@/hooks/useNotes';
+import { useSettings } from '@/hooks/useSettings';
 import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
+import { SettingsPanel } from '@/components/SettingsPanel';
 import { FileText } from 'lucide-react';
 
 const Index = () => {
@@ -11,6 +14,9 @@ const Index = () => {
     createNote, updateNote, deleteNote, moveNoteToFolder,
     addMedia, getNotesByFolder, getChildFolders, getRootFolders, getDescendantFolderIds,
   } = useNotes();
+
+  const { settings, updateSetting } = useSettings();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
@@ -31,6 +37,8 @@ const Index = () => {
         onCreateNote={createNote}
         onDeleteNote={deleteNote}
         onMoveNote={moveNoteToFolder}
+        confirmDelete={settings.confirmDelete}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
 
       {activeNote ? (
@@ -49,6 +57,13 @@ const Index = () => {
           </div>
         </div>
       )}
+
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        confirmDelete={settings.confirmDelete}
+        onToggleConfirmDelete={(v) => updateSetting('confirmDelete', v)}
+      />
     </div>
   );
 };

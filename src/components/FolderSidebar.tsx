@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
-import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown } from 'lucide-react';
+import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings } from 'lucide-react';
 import type { Folder as FolderType, Note } from '@/types/notes';
 import { DeleteFolderDialog } from './DeleteFolderDialog';
+import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 
 interface Props {
   folders: FolderType[];
@@ -20,6 +21,8 @@ interface Props {
   onCreateNote: (folderId: string | null) => void;
   onDeleteNote: (id: string) => void;
   onMoveNote: (noteId: string, folderId: string | null) => void;
+  confirmDelete: boolean;
+  onOpenSettings: () => void;
 }
 
 export function FolderSidebar({
@@ -27,12 +30,15 @@ export function FolderSidebar({
   getDescendantFolderIds, activeNoteId,
   onCreateFolder, onDeleteFolderAll, onDeleteFolderKeep, onMoveFolderToParent,
   onSelectNote, onCreateNote, onDeleteNote, onMoveNote,
+  confirmDelete, onOpenSettings,
 }: Props) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [deletingFolder, setDeletingFolder] = useState<FolderType | null>(null);
+  const [confirmDeleteNote, setConfirmDeleteNote] = useState<Note | null>(null);
+  const [confirmDeleteEmptyFolder, setConfirmDeleteEmptyFolder] = useState<FolderType | null>(null);
 
   const toggleFolder = (id: string) => {
     setExpandedFolders(prev => {
@@ -59,9 +65,22 @@ export function FolderSidebar({
   const handleDeleteFolder = (folder: FolderType) => {
     const allNotes = getAllNotesInFolder(folder.id);
     if (allNotes.length === 0) {
-      onDeleteFolderAll(folder.id);
+      if (confirmDelete) {
+        setConfirmDeleteEmptyFolder(folder);
+      } else {
+        onDeleteFolderAll(folder.id);
+      }
     } else {
       setDeletingFolder(folder);
+    }
+  };
+
+  const handleDeleteNote = (id: string) => {
+    if (confirmDelete) {
+      const note = notes.find(n => n.id === id);
+      if (note) setConfirmDeleteNote(note);
+    } else {
+      onDeleteNote(id);
     }
   };
 
@@ -142,7 +161,7 @@ export function FolderSidebar({
               onCreateNote={onCreateNote}
               onDeleteFolder={handleDeleteFolder}
               onSelectNote={onSelectNote}
-              onDeleteNote={onDeleteNote}
+              onDeleteNote={handleDeleteNote}
             />
           ))}
 
@@ -164,7 +183,7 @@ export function FolderSidebar({
                   note={note}
                   isActive={note.id === activeNoteId}
                   onSelect={onSelectNote}
-                  onDelete={onDeleteNote}
+                  onDelete={handleDeleteNote}
                   depth={0}
                 />
               ))}
@@ -180,14 +199,21 @@ export function FolderSidebar({
           )}
         </div>
 
-        {/* Bottom new note button */}
-        <div className="border-t border-border p-2">
+        {/* Bottom buttons */}
+        <div className="border-t border-border p-2 flex items-center gap-1">
           <button
             onClick={() => onCreateNote(null)}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+            className="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
           >
             <Plus className="w-4 h-4" />
             New Note
+          </button>
+          <button
+            onClick={onOpenSettings}
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+            title="Settings"
+          >
+            <Settings className="w-4 h-4" />
           </button>
         </div>
       </aside>
@@ -202,6 +228,22 @@ export function FolderSidebar({
           onKeepSelected={(ids) => { onDeleteFolderKeep(deletingFolder.id, ids); setDeletingFolder(null); }}
         />
       )}
+
+      <ConfirmDeleteDialog
+        open={!!confirmDeleteNote}
+        title={`Delete "${confirmDeleteNote?.title || 'Untitled'}"?`}
+        description="This note will be permanently deleted. This action cannot be undone."
+        onConfirm={() => { if (confirmDeleteNote) onDeleteNote(confirmDeleteNote.id); setConfirmDeleteNote(null); }}
+        onCancel={() => setConfirmDeleteNote(null)}
+      />
+
+      <ConfirmDeleteDialog
+        open={!!confirmDeleteEmptyFolder}
+        title={`Delete "${confirmDeleteEmptyFolder?.name}"?`}
+        description="This empty folder will be permanently deleted."
+        onConfirm={() => { if (confirmDeleteEmptyFolder) onDeleteFolderAll(confirmDeleteEmptyFolder.id); setConfirmDeleteEmptyFolder(null); }}
+        onCancel={() => setConfirmDeleteEmptyFolder(null)}
+      />
     </>
   );
 }
