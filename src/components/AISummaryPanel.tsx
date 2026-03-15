@@ -1,20 +1,72 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Sparkles, X, Loader2, Send } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+interface ConversationItem {
+  question: string;
+  answer: string;
+}
 
 interface Props {
   summary: string | null;
   isSummarizing: boolean;
   noteContent: string;
   noteTitle: string;
+  noteId: string;
   onClose: () => void;
+  onSummaryLoaded: (summary: string) => void;
 }
 
-export function AISummaryPanel({ summary, isSummarizing, noteContent, noteTitle, onClose }: Props) {
+export function AISummaryPanel({ summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded }: Props) {
   const [followUp, setFollowUp] = useState('');
-  const [conversation, setConversation] = useState<{ question: string; answer: string }[]>([]);
+  const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [isAsking, setIsAsking] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+
+  // Load existing conversation for this note
+  useEffect(() => {
+    const loadConversation = async () => {
+      const { data, error } = await supabase
+        .from('ai_conversations')
+        .select('*')
+        .eq('note_id', noteId)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data) {
+        setConversationId(data.id);
+        setConversation((data.conversation as ConversationItem[]) || []);
+        onSummaryLoaded(data.summary);
+      } else {
+        setConversationId(null);
+        setConversation([]);
+      }
+    };
+    loadConversation();
+  }, [noteId]);
+
+  // Save conversation when summary or conversation changes
+  useEffect(() => {
+    if (!summary) return;
+    const save = async () => {
+      const payload = {
+        note_id: noteId,
+        summary,
+        conversation: conversation as unknown as Record<string, unknown>[],
+        updated_at: new Date().toISOString(),
+      };
+
+      if (conversationId) {
+        await supabase.from('ai_conversations').update(payload).eq('id', conversationId);
+      } else {
+        const { data } = await supabase.from('ai_conversations').insert(payload).select().single();
+        if (data) setConversationId(data.id);
+      }
+    };
+    save();
+  }, [summary, conversation, noteId, conversationId]);
 
   const handleAsk = useCallback(async () => {
     if (!followUp.trim() || !summary) return;
