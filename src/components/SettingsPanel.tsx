@@ -12,7 +12,7 @@ interface Props {
   onToggleConfirmDeleteAiChat: (value: boolean) => void;
 }
 
-export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete }: Props) {
+export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat }: Props) {
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="sm:max-w-sm">
