@@ -199,14 +199,21 @@ export function FolderSidebar({
           )}
         </div>
 
-        {/* Bottom new note button */}
-        <div className="border-t border-border p-2">
+        {/* Bottom buttons */}
+        <div className="border-t border-border p-2 flex items-center gap-1">
           <button
             onClick={() => onCreateNote(null)}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+            className="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
           >
             <Plus className="w-4 h-4" />
             New Note
+          </button>
+          <button
+            onClick={onOpenSettings}
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+            title="Settings"
+          >
+            <Settings className="w-4 h-4" />
           </button>
         </div>
       </aside>
