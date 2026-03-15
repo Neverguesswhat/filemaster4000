@@ -21,6 +21,8 @@ interface Props {
   onCreateNote: (folderId: string | null) => void;
   onDeleteNote: (id: string) => void;
   onMoveNote: (noteId: string, folderId: string | null) => void;
+  confirmDelete: boolean;
+  onOpenSettings: () => void;
 }
 
 export function FolderSidebar({
