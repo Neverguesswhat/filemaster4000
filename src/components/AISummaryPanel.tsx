@@ -37,7 +37,7 @@ export function AISummaryPanel({ summary, isSummarizing, noteContent, noteTitle,
 
       if (!error && data) {
         setConversationId(data.id);
-        setConversation((data.conversation as ConversationItem[]) || []);
+        setConversation((data.conversation as unknown as ConversationItem[]) || []);
         onSummaryLoaded(data.summary);
       } else {
         setConversationId(null);
