@@ -83,7 +83,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
 
   // Save conversation when summary or conversation changes
   useEffect(() => {
-    if (!summary || suppressSaveRef.current) return;
+    if (!summary || suppressSaveRef.current || !loadedRef.current) return;
 
     const signature = `${noteId}::${summary}::${JSON.stringify(conversation)}`;
     if (signature === lastSavedSignatureRef.current) return;
