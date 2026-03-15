@@ -161,7 +161,7 @@ export function FolderSidebar({
               onCreateNote={onCreateNote}
               onDeleteFolder={handleDeleteFolder}
               onSelectNote={onSelectNote}
-              onDeleteNote={onDeleteNote}
+              onDeleteNote={handleDeleteNote}
             />
           ))}
 
