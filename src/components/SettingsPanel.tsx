@@ -26,40 +26,31 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
         </SheetHeader>
 
         <div className="py-6 space-y-6">
-          <div className="flex items-center justify-between gap-4">
-            <Label htmlFor="confirm-delete" className="flex flex-col gap-1 cursor-pointer">
-              <span className="text-sm font-medium">Delete confirmation</span>
-              <span className="text-xs text-muted-foreground font-normal">Show a confirmation dialog before deleting files and folders</span>
-            </Label>
-            <Switch
-              id="confirm-delete"
-              checked={confirmDelete}
-              onCheckedChange={onToggleConfirmDelete}
-            />
-          </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <Label htmlFor="confirm-delete-ai" className="flex flex-col gap-1 cursor-pointer">
-              <span className="text-sm font-medium">AI chat delete confirmation</span>
-              <span className="text-xs text-muted-foreground font-normal">Show a confirmation dialog before deleting AI conversations</span>
-            </Label>
-            <Switch
-              id="confirm-delete-ai"
-              checked={confirmDeleteAiChat}
-              onCheckedChange={onToggleConfirmDeleteAiChat}
-            />
-          </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <Label htmlFor="confirm-delete-table" className="flex flex-col gap-1 cursor-pointer">
-              <span className="text-sm font-medium">Table delete confirmation</span>
-              <span className="text-xs text-muted-foreground font-normal">Show a confirmation dialog before deleting tables in the editor</span>
-            </Label>
-            <Switch
-              id="confirm-delete-table"
-              checked={confirmDeleteTable}
-              onCheckedChange={onToggleConfirmDeleteTable}
-            />
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Delete confirmation</h3>
+            <div className="space-y-5">
+              <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="confirm-delete" className="flex flex-col gap-1 cursor-pointer">
+                  <span className="text-sm font-medium">Files & folders</span>
+                  <span className="text-xs text-muted-foreground font-normal">Confirm before deleting files and folders</span>
+                </Label>
+                <Switch id="confirm-delete" checked={confirmDelete} onCheckedChange={onToggleConfirmDelete} />
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="confirm-delete-ai" className="flex flex-col gap-1 cursor-pointer">
+                  <span className="text-sm font-medium">AI conversations</span>
+                  <span className="text-xs text-muted-foreground font-normal">Confirm before deleting AI conversations</span>
+                </Label>
+                <Switch id="confirm-delete-ai" checked={confirmDeleteAiChat} onCheckedChange={onToggleConfirmDeleteAiChat} />
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <Label htmlFor="confirm-delete-table" className="flex flex-col gap-1 cursor-pointer">
+                  <span className="text-sm font-medium">Tables</span>
+                  <span className="text-xs text-muted-foreground font-normal">Confirm before deleting tables in the editor</span>
+                </Label>
+                <Switch id="confirm-delete-table" checked={confirmDeleteTable} onCheckedChange={onToggleConfirmDeleteTable} />
+              </div>
+            </div>
           </div>
         </div>
       </SheetContent>
