@@ -130,7 +130,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         <SheetHeader className="px-5 py-4 border-b border-border pr-14">
           <SheetTitle className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
+              <Sparkles className="w-6 h-6 text-primary" />
               AI Summary
             </span>
             {summary && !isSummarizing && (
@@ -139,7 +139,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
                 className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                 title="Delete conversation"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash2 className="w-6 h-6" />
               </button>
             )}
           </SheetTitle>
