@@ -206,5 +206,14 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         )}
       </SheetContent>
     </Sheet>
+
+    <ConfirmDeleteDialog
+      open={showDeleteConfirm}
+      title="Delete AI conversation"
+      description="Are you sure you want to delete this AI conversation? This action cannot be undone."
+      onConfirm={executeDelete}
+      onCancel={() => setShowDeleteConfirm(false)}
+    />
+    </>
   );
 }

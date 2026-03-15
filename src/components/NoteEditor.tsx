@@ -17,7 +17,7 @@ interface Props {
   confirmDeleteAiChat: boolean;
 }
 
-export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }: Props) {
+export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
