@@ -1,4 +1,5 @@
-import { BubbleMenu, Editor } from '@tiptap/react';
+import { BubbleMenu } from '@tiptap/react/menus';
+import type { Editor } from '@tiptap/react';
 import { ArrowUp, ArrowDown, Plus, Trash2, Rows3, Columns3 } from 'lucide-react';
 
 interface Props {
