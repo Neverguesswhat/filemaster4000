@@ -8,6 +8,8 @@ interface Props {
   onClose: () => void;
   confirmDelete: boolean;
   onToggleConfirmDelete: (value: boolean) => void;
+  confirmDeleteAiChat: boolean;
+  onToggleConfirmDeleteAiChat: (value: boolean) => void;
 }
 
 export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete }: Props) {
