@@ -10,9 +10,11 @@ interface Props {
   onToggleConfirmDelete: (value: boolean) => void;
   confirmDeleteAiChat: boolean;
   onToggleConfirmDeleteAiChat: (value: boolean) => void;
+  confirmDeleteTable: boolean;
+  onToggleConfirmDeleteTable: (value: boolean) => void;
 }
 
-export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat }: Props) {
+export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat, confirmDeleteTable, onToggleConfirmDeleteTable }: Props) {
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="sm:max-w-sm">
@@ -45,6 +47,18 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
               id="confirm-delete-ai"
               checked={confirmDeleteAiChat}
               onCheckedChange={onToggleConfirmDeleteAiChat}
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <Label htmlFor="confirm-delete-table" className="flex flex-col gap-1 cursor-pointer">
+              <span className="text-sm font-medium">Table delete confirmation</span>
+              <span className="text-xs text-muted-foreground font-normal">Show a confirmation dialog before deleting tables in the editor</span>
+            </Label>
+            <Switch
+              id="confirm-delete-table"
+              checked={confirmDeleteTable}
+              onCheckedChange={onToggleConfirmDeleteTable}
             />
           </div>
         </div>

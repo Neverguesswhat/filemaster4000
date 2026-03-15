@@ -48,6 +48,7 @@ const Index = () => {
           onUpdateContent={(content) => updateNote(activeNote.id, { content })}
           onAddMedia={(file) => addMedia(file)}
           confirmDeleteAiChat={settings.confirmDeleteAiChat}
+          confirmDeleteTable={settings.confirmDeleteTable}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center">
@@ -66,6 +67,8 @@ const Index = () => {
         onToggleConfirmDelete={(v) => updateSetting('confirmDelete', v)}
         confirmDeleteAiChat={settings.confirmDeleteAiChat}
         onToggleConfirmDeleteAiChat={(v) => updateSetting('confirmDeleteAiChat', v)}
+        confirmDeleteTable={settings.confirmDeleteTable}
+        onToggleConfirmDeleteTable={(v) => updateSetting('confirmDeleteTable', v)}
       />
     </div>
   );
