@@ -50,6 +50,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
         toast.error(data.error);
       } else {
         setSummary(data.summary);
+        setSummaryNoteId(note.id);
       }
     } catch (e) {
       console.error('Summarize error:', e);
