@@ -207,7 +207,7 @@ export function FolderSidebar({
 // Recursive folder component
 function FolderItem({
   folder, depth, expandedFolders, dragOverFolder, activeNoteId,
-  getNotesByFolder, getChildFolders,
+  getNotesByFolder, getChildFolders, getDescendantFolderIds, allFolders,
   onToggle, onDrop, onDragOver, onDragLeave,
   onCreateNote, onDeleteFolder, onSelectNote, onDeleteNote,
 }: {
@@ -218,6 +218,8 @@ function FolderItem({
   activeNoteId: string | null;
   getNotesByFolder: (id: string) => Note[];
   getChildFolders: (parentId: string | null) => FolderType[];
+  getDescendantFolderIds: (folderId: string, allFolders: FolderType[]) => string[];
+  allFolders: FolderType[];
   onToggle: (id: string) => void;
   onDrop: (e: React.DragEvent, folderId: string | null) => void;
   onDragOver: (e: React.DragEvent, folderId: string | null) => void;
