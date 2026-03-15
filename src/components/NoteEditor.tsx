@@ -3,7 +3,11 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
-import { Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Heading1, Heading2, ImagePlus, Minus, Sparkles, Loader2 } from 'lucide-react';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
+import { Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Heading1, Heading2, ImagePlus, Minus, Sparkles, Loader2, TableIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AISummaryPanel } from './AISummaryPanel';
@@ -64,6 +68,10 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
       StarterKit,
       Image.configure({ inline: false, allowBase64: true }),
       Placeholder.configure({ placeholder: 'Start writing...' }),
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableCell,
+      TableHeader,
     ],
     content: note.content || '',
     onUpdate: ({ editor }) => {
@@ -184,6 +192,11 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
           active={false}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           icon={<Minus className="w-4 h-4" />}
+        />
+        <ToolbarButton
+          active={false}
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          icon={<TableIcon className="w-4 h-4" />}
         />
         <div className="w-px h-5 bg-border mx-1" />
         <ToolbarButton
