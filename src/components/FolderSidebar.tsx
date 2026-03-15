@@ -58,7 +58,7 @@ export function FolderSidebar({
   return (
     <aside className="w-[250px] min-w-[250px] h-screen bg-secondary border-r border-border flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border">
+      <div className="flex items-center justify-between px-4 h-[41px] border-b border-border">
         <h2 className="text-sm font-semibold text-foreground tracking-wide uppercase">Folders</h2>
         <button
           onClick={() => setIsAddingFolder(true)}

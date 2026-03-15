@@ -120,7 +120,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 px-6 py-2 border-b border-border bg-background sticky top-0 z-10">
+      <div className="flex items-center gap-0.5 px-6 h-[41px] border-b border-border bg-background sticky top-0 z-10">
         <ToolbarButton
           active={editor.isActive('heading', { level: 1 })}
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
