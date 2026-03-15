@@ -32,6 +32,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const lastSavedSignatureRef = useRef<string | null>(null);
   const suppressSaveRef = useRef(false);
+  const loadedRef = useRef(false);
 
   // Reset and load existing conversation for this note
   useEffect(() => {
@@ -41,6 +42,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     setConversationId(null);
     setConversation([]);
     lastSavedSignatureRef.current = null;
+    loadedRef.current = false;
 
     const loadConversation = async () => {
       const { data, error } = await supabase
@@ -59,6 +61,9 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         setConversation(loadedConversation);
         onSummaryLoaded(data.summary);
         lastSavedSignatureRef.current = `${noteId}::${data.summary}::${JSON.stringify(loadedConversation)}`;
+        loadedRef.current = true;
+      } else {
+        loadedRef.current = true;
       }
     };
 
@@ -78,7 +83,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
 
   // Save conversation when summary or conversation changes
   useEffect(() => {
-    if (!summary || suppressSaveRef.current) return;
+    if (!summary || suppressSaveRef.current || !loadedRef.current) return;
 
     const signature = `${noteId}::${summary}::${JSON.stringify(conversation)}`;
     if (signature === lastSavedSignatureRef.current) return;
