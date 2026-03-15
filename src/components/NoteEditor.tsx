@@ -68,7 +68,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image.configure({ inline: false, allowBase64: true }),
+      ImageResize.configure({ minWidth: 50, maxWidth: 800 }),
       Placeholder.configure({ placeholder: 'Start writing...' }),
       Table.configure({ resizable: true }),
       TableRow,
