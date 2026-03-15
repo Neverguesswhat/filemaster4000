@@ -22,6 +22,13 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
+  // Reset AI state when switching notes
+  useEffect(() => {
+    setSummary(null);
+    setIsSummarizing(false);
+    setAiPanelOpen(false);
+  }, [note.id]);
+
   const handleSummarize = useCallback(async () => {
     if (!note.content || note.content.trim() === '' || note.content === '<p></p>') {
       toast.error('Add some content to your note first');
