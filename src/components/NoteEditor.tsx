@@ -20,8 +20,10 @@ interface Props {
 export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
+  const [summaryNoteId, setSummaryNoteId] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const scopedSummary = summaryNoteId === note.id ? summary : null;
 
   // Reset AI state when switching notes
   useEffect(() => {

@@ -33,6 +33,8 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
 
   // Reset and load existing conversation for this note
   useEffect(() => {
+    let isCurrent = true;
+
     // Immediately reset state to prevent showing stale data from another note
     setConversationId(null);
     setConversation([]);
@@ -46,14 +48,21 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         .limit(1)
         .maybeSingle();
 
+      if (!isCurrent) return;
+
       if (!error && data) {
         setConversationId(data.id);
         setConversation((data.conversation as unknown as ConversationItem[]) || []);
         onSummaryLoaded(data.summary);
       }
     };
+
     loadConversation();
-  }, [noteId]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [noteId, onSummaryLoaded]);
 
   // Save conversation when summary or conversation changes
   useEffect(() => {
