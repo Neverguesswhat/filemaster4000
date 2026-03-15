@@ -29,6 +29,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
     }
     setIsSummarizing(true);
     setSummary(null);
+    setAiPanelOpen(true);
     try {
       const { data, error } = await supabase.functions.invoke('summarize-note', {
         body: { content: note.content, title: note.title },
