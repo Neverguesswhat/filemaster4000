@@ -193,6 +193,11 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           icon={<Minus className="w-4 h-4" />}
         />
+        <ToolbarButton
+          active={false}
+          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          icon={<TableIcon className="w-4 h-4" />}
+        />
         <div className="w-px h-5 bg-border mx-1" />
         <ToolbarButton
           active={false}
