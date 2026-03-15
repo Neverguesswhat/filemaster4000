@@ -126,24 +126,30 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
   return (
     <>
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
-        <SheetHeader className="px-5 py-4 border-b border-border pr-14">
-          <SheetTitle className="flex items-center justify-between text-sm">
-            <span className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              AI Summary
-            </span>
+      <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md [&>button]:hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <span className="flex items-center gap-2 text-sm font-semibold">
+            <Sparkles className="w-4 h-4 text-primary" />
+            AI Summary
+          </span>
+          <div className="flex items-center gap-1">
             {summary && !isSummarizing && (
               <button
                 onClick={handleDelete}
                 className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                 title="Delete conversation"
               >
-                <Trash2 className="w-6 h-6" />
+                <Trash2 className="w-4 h-4" />
               </button>
             )}
-          </SheetTitle>
-        </SheetHeader>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-sm text-muted-foreground opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
 
         <ScrollArea className="flex-1 min-h-0">
           <div className="px-5 py-4 space-y-4">
