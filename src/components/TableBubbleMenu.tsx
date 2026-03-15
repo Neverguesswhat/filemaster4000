@@ -116,7 +116,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
           destructive
         />
         <div className="w-px h-5 bg-border mx-0.5" />
-        {/* Add / remove columns */}
+        {/* Add / remove columns: +col, −col */}
         <MenuButton
           onClick={() => editor.chain().focus().addColumnAfter().run()}
           icon={<Plus className="w-4 h-4" />}
