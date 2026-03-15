@@ -198,12 +198,13 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
       </div>
 
       <AISummaryPanel
+        open={aiPanelOpen}
         summary={summary}
         isSummarizing={isSummarizing}
         noteContent={note.content}
         noteTitle={note.title}
         noteId={note.id}
-        onClose={() => setSummary(null)}
+        onClose={() => setAiPanelOpen(false)}
         onSummaryLoaded={(s) => setSummary(s)}
       />
 
