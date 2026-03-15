@@ -133,6 +133,8 @@ export function FolderSidebar({
               activeNoteId={activeNoteId}
               getNotesByFolder={getNotesByFolder}
               getChildFolders={getChildFolders}
+              getDescendantFolderIds={getDescendantFolderIds}
+              allFolders={folders}
               onToggle={toggleFolder}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
