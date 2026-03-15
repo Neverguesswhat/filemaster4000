@@ -136,7 +136,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
             {summary && !isSummarizing && (
               <button
                 onClick={handleDelete}
-                className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                className="absolute right-12 top-4 p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                 title="Delete conversation"
               >
                 <Trash2 className="w-3.5 h-3.5" />
