@@ -5,21 +5,28 @@ import { FileText } from 'lucide-react';
 
 const Index = () => {
   const {
-    folders, unfiledNotes, activeNote, activeNoteId,
-    setActiveNoteId, createFolder, deleteFolder,
+    notes, folders, unfiledNotes, activeNote, activeNoteId,
+    setActiveNoteId, createFolder,
+    deleteFolderAndContents, deleteFolderKeepNotes, moveFolderToParent,
     createNote, updateNote, deleteNote, moveNoteToFolder,
-    addMedia, getNotesByFolder,
+    addMedia, getNotesByFolder, getChildFolders, getRootFolders, getDescendantFolderIds,
   } = useNotes();
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
       <FolderSidebar
         folders={folders}
+        notes={notes}
         unfiledNotes={unfiledNotes}
         getNotesByFolder={getNotesByFolder}
+        getChildFolders={getChildFolders}
+        getRootFolders={getRootFolders}
+        getDescendantFolderIds={getDescendantFolderIds}
         activeNoteId={activeNoteId}
         onCreateFolder={createFolder}
-        onDeleteFolder={deleteFolder}
+        onDeleteFolderAll={deleteFolderAndContents}
+        onDeleteFolderKeep={deleteFolderKeepNotes}
+        onMoveFolderToParent={moveFolderToParent}
         onSelectNote={setActiveNoteId}
         onCreateNote={createNote}
         onDeleteNote={deleteNote}
@@ -31,7 +38,7 @@ const Index = () => {
           note={activeNote}
           onUpdateTitle={(title) => updateNote(activeNote.id, { title })}
           onUpdateContent={(content) => updateNote(activeNote.id, { content })}
-          onAddMedia={(file) => addMedia(file, activeNote.id, activeNote.folderId)}
+          onAddMedia={(file) => addMedia(file)}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center">

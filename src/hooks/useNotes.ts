@@ -9,7 +9,6 @@ export function useNotes() {
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load data on mount
   useEffect(() => {
     const load = async () => {
       try {
@@ -23,6 +22,7 @@ export function useNotes() {
         setFolders(foldersRes.data.map(f => ({
           id: f.id,
           name: f.name,
+          parentId: f.parent_id,
           createdAt: new Date(f.created_at).getTime(),
         })));
         setNotes(notesRes.data.map(n => ({
@@ -45,10 +45,10 @@ export function useNotes() {
 
   const activeNote = notes.find(n => n.id === activeNoteId) ?? null;
 
-  const createFolder = useCallback(async (name: string) => {
-    const { data, error } = await supabase.from('folders').insert({ name }).select().single();
+  const createFolder = useCallback(async (name: string, parentId: string | null = null) => {
+    const { data, error } = await supabase.from('folders').insert({ name, parent_id: parentId }).select().single();
     if (error) { toast.error('Failed to create folder'); return; }
-    const folder: Folder = { id: data.id, name: data.name, createdAt: new Date(data.created_at).getTime() };
+    const folder: Folder = { id: data.id, name: data.name, parentId: data.parent_id, createdAt: new Date(data.created_at).getTime() };
     setFolders(prev => [...prev, folder]);
     return folder;
   }, []);
@@ -59,14 +59,79 @@ export function useNotes() {
     setFolders(prev => prev.map(f => f.id === id ? { ...f, name } : f));
   }, []);
 
-  const deleteFolder = useCallback(async (id: string) => {
-    // First unfile notes in this folder
-    await supabase.from('notes').update({ folder_id: null }).eq('folder_id', id);
+  // Get all descendant folder IDs recursively
+  const getDescendantFolderIds = useCallback((folderId: string, allFolders: Folder[]): string[] => {
+    const children = allFolders.filter(f => f.parentId === folderId);
+    return children.flatMap(c => [c.id, ...getDescendantFolderIds(c.id, allFolders)]);
+  }, []);
+
+  const deleteFolderAndContents = useCallback(async (id: string) => {
+    // CASCADE on parent_id handles child folders in DB
+    // Delete all notes in this folder and descendant folders
+    const descendantIds = getDescendantFolderIds(id, folders);
+    const allFolderIds = [id, ...descendantIds];
+
+    for (const fid of allFolderIds) {
+      await supabase.from('notes').delete().eq('folder_id', fid);
+    }
     const { error } = await supabase.from('folders').delete().eq('id', id);
     if (error) { toast.error('Failed to delete folder'); return; }
-    setFolders(prev => prev.filter(f => f.id !== id));
-    setNotes(prev => prev.map(n => n.folderId === id ? { ...n, folderId: null } : n));
-  }, []);
+
+    setNotes(prev => prev.filter(n => !allFolderIds.includes(n.folderId ?? '')));
+    setFolders(prev => prev.filter(f => !allFolderIds.includes(f.id)));
+  }, [folders, getDescendantFolderIds]);
+
+  const deleteFolderKeepNotes = useCallback(async (id: string, noteIdsToKeep: string[]) => {
+    const descendantIds = getDescendantFolderIds(id, folders);
+    const allFolderIds = [id, ...descendantIds];
+
+    // Get or create "To Sort" folder
+    let toSortFolder = folders.find(f => f.name === 'To Sort' && f.parentId === null);
+    if (!toSortFolder) {
+      const { data, error } = await supabase.from('folders').insert({ name: 'To Sort' }).select().single();
+      if (error) { toast.error('Failed to create To Sort folder'); return; }
+      toSortFolder = { id: data.id, name: data.name, parentId: data.parent_id, createdAt: new Date(data.created_at).getTime() };
+      setFolders(prev => [...prev, toSortFolder!]);
+    }
+
+    // Move kept notes to "To Sort"
+    if (noteIdsToKeep.length > 0) {
+      for (const noteId of noteIdsToKeep) {
+        await supabase.from('notes').update({ folder_id: toSortFolder.id }).eq('id', noteId);
+      }
+    }
+
+    // Delete notes not kept
+    const allNotesInFolders = notes.filter(n => allFolderIds.includes(n.folderId ?? ''));
+    const noteIdsToDelete = allNotesInFolders.filter(n => !noteIdsToKeep.includes(n.id)).map(n => n.id);
+    for (const noteId of noteIdsToDelete) {
+      await supabase.from('notes').delete().eq('id', noteId);
+    }
+
+    // Delete the folder (cascade deletes children)
+    const { error } = await supabase.from('folders').delete().eq('id', id);
+    if (error) { toast.error('Failed to delete folder'); return; }
+
+    setNotes(prev => prev
+      .filter(n => !noteIdsToDelete.includes(n.id))
+      .map(n => noteIdsToKeep.includes(n.id) ? { ...n, folderId: toSortFolder!.id } : n)
+    );
+    setFolders(prev => prev.filter(f => !allFolderIds.includes(f.id)));
+  }, [folders, notes, getDescendantFolderIds]);
+
+  const moveFolderToParent = useCallback(async (folderId: string, parentId: string | null) => {
+    // Prevent moving a folder into itself or its descendants
+    if (parentId) {
+      const descendantIds = getDescendantFolderIds(folderId, folders);
+      if (parentId === folderId || descendantIds.includes(parentId)) {
+        toast.error("Can't move a folder into itself");
+        return;
+      }
+    }
+    const { error } = await supabase.from('folders').update({ parent_id: parentId }).eq('id', folderId);
+    if (error) { toast.error('Failed to move folder'); return; }
+    setFolders(prev => prev.map(f => f.id === folderId ? { ...f, parentId } : f));
+  }, [folders, getDescendantFolderIds]);
 
   const createNote = useCallback(async (folderId: string | null = null) => {
     const { data, error } = await supabase.from('notes').insert({
@@ -106,29 +171,32 @@ export function useNotes() {
     setActiveNoteId(prev => prev === id ? null : prev);
   }, []);
 
-  const moveNoteToFolder = useCallback(async (noteId: string, folderId: string) => {
+  const moveNoteToFolder = useCallback(async (noteId: string, folderId: string | null) => {
     const { error } = await supabase.from('notes').update({ folder_id: folderId, updated_at: new Date().toISOString() }).eq('id', noteId);
     if (error) { toast.error('Failed to move note'); return; }
     setNotes(prev => prev.map(n => n.id === noteId ? { ...n, folderId, updatedAt: Date.now() } : n));
   }, []);
 
-  const addMedia = useCallback((file: File, noteId: string, folderId: string | null): Promise<string> => {
+  const addMedia = useCallback((file: File): Promise<string> => {
     return new Promise((resolve) => {
       const reader = new FileReader();
-      reader.onload = () => {
-        resolve(reader.result as string);
-      };
+      reader.onload = () => resolve(reader.result as string);
       reader.readAsDataURL(file);
     });
   }, []);
 
   const unfiledNotes = notes.filter(n => n.folderId === null);
   const getNotesByFolder = useCallback((folderId: string) => notes.filter(n => n.folderId === folderId), [notes]);
+  const getChildFolders = useCallback((parentId: string | null) => folders.filter(f => f.parentId === parentId), [folders]);
+  const getRootFolders = useCallback(() => folders.filter(f => f.parentId === null), [folders]);
 
   return {
     notes, folders, activeNote, activeNoteId, isLoading,
-    setActiveNoteId, createFolder, renameFolder, deleteFolder,
+    setActiveNoteId, createFolder, renameFolder,
+    deleteFolderAndContents, deleteFolderKeepNotes,
+    moveFolderToParent,
     createNote, updateNote, deleteNote, moveNoteToFolder,
     addMedia, unfiledNotes, getNotesByFolder,
+    getChildFolders, getRootFolders, getDescendantFolderIds,
   };
 }
