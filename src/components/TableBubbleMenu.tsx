@@ -1,12 +1,35 @@
 import { useState } from 'react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import type { Editor } from '@tiptap/react';
-import { ArrowUp, ArrowDown, Plus, Minus, Trash2 } from 'lucide-react';
+import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 
 interface Props {
   editor: Editor;
   confirmDeleteTable: boolean;
+}
+
+interface MenuButtonProps {
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  destructive?: boolean;
+}
+
+function MenuButton({ onClick, icon, label, destructive }: MenuButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      title={label}
+      className={`p-1.5 rounded-md transition-colors flex items-center gap-0.5 ${
+        destructive
+          ? 'text-destructive hover:bg-destructive/10'
+          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+      }`}
+    >
+      {icon}
+    </button>
+  );
 }
 
 function moveRowUp(editor: Editor) {
@@ -89,7 +112,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
       <BubbleMenu
         editor={editor}
         shouldShow={({ editor }) => editor.isActive('table')}
-        className="flex items-center gap-1 bg-popover border border-border rounded-lg shadow-lg p-1.5"
+        className="flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1"
       >
         {/* Row movement: ↑ ↓ */}
         <MenuButton
@@ -102,43 +125,40 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
           icon={<ArrowDown className="w-4 h-4" />}
           label="Move row down"
         />
-        <div className="w-px h-5 bg-border mx-1" />
-        {/* Add / remove rows: +row, −row */}
+        <div className="w-px h-5 bg-border mx-0.5" />
+        {/* +row, −row */}
         <MenuButton
           onClick={() => editor.chain().focus().addRowAfter().run()}
-          icon={<Plus className="w-4 h-4" />}
+          icon={<><Plus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
           label="Add row"
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteRow().run()}
-          icon={<Minus className="w-4 h-4" />}
+          icon={<><Minus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
           label="Delete row"
           destructive
         />
-        <div className="w-px h-5 bg-border mx-1" />
-        {/* Add / remove columns: +col, −col */}
+        <div className="w-px h-5 bg-border mx-0.5" />
+        {/* +col, −col */}
         <MenuButton
           onClick={() => editor.chain().focus().addColumnAfter().run()}
-          icon={<Plus className="w-4 h-4" />}
+          icon={<><Plus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
           label="Add column"
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteColumn().run()}
-          icon={<Minus className="w-4 h-4" />}
+          icon={<><Minus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
           label="Delete column"
           destructive
         />
-        <div className="w-px h-5 bg-border mx-1" />
-        {/* Delete table: 🗑 */}
-        <div className="flex items-center gap-1.5">
-          <MenuButton
-            onClick={handleDeleteTable}
-            icon={<Trash2 className="w-4 h-4" />}
-            label="Delete table"
-            destructive
-          />
-          <span className="text-destructive text-xs font-medium pr-0.5">Delete table</span>
-        </div>
+        <div className="w-px h-5 bg-border mx-0.5" />
+        {/* 🗑 Delete table */}
+        <MenuButton
+          onClick={handleDeleteTable}
+          icon={<Trash2 className="w-4 h-4" />}
+          label="Delete table"
+          destructive
+        />
       </BubbleMenu>
 
       <ConfirmDeleteDialog
@@ -152,21 +172,5 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
         description="This will permanently delete the entire table and its contents."
       />
     </>
-  );
-}
-
-function MenuButton({ onClick, icon, label, destructive }: { onClick: () => void; icon: React.ReactNode; label: string; destructive?: boolean }) {
-  return (
-    <button
-      onClick={onClick}
-      title={label}
-      className={`p-1.5 rounded-md transition-colors ${
-        destructive
-          ? 'text-destructive hover:bg-destructive/10'
-          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-      }`}
-    >
-      {icon}
-    </button>
   );
 }
