@@ -22,7 +22,7 @@ interface Props {
   onClearSummary: () => void;
 }
 
-export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded }: Props) {
+export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded, onClearSummary }: Props) {
   const [followUp, setFollowUp] = useState('');
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [isAsking, setIsAsking] = useState(false);
