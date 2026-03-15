@@ -348,5 +348,3 @@ function NoteItem({ note, isActive, onSelect, onDelete, depth }: {
     </div>
   );
 }
-
-import type { Folder as FolderType, Note } from '@/types/notes';
