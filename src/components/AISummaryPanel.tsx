@@ -42,6 +42,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     setConversationId(null);
     setConversation([]);
     lastSavedSignatureRef.current = null;
+    loadedRef.current = false;
 
     const loadConversation = async () => {
       const { data, error } = await supabase
