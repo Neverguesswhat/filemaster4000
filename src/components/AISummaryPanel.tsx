@@ -19,6 +19,7 @@ interface Props {
   noteId: string;
   onClose: () => void;
   onSummaryLoaded: (summary: string) => void;
+  onClearSummary: () => void;
 }
 
 export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded }: Props) {
