@@ -65,9 +65,22 @@ export function FolderSidebar({
   const handleDeleteFolder = (folder: FolderType) => {
     const allNotes = getAllNotesInFolder(folder.id);
     if (allNotes.length === 0) {
-      onDeleteFolderAll(folder.id);
+      if (confirmDelete) {
+        setConfirmDeleteEmptyFolder(folder);
+      } else {
+        onDeleteFolderAll(folder.id);
+      }
     } else {
       setDeletingFolder(folder);
+    }
+  };
+
+  const handleDeleteNote = (id: string) => {
+    if (confirmDelete) {
+      const note = notes.find(n => n.id === id);
+      if (note) setConfirmDeleteNote(note);
+    } else {
+      onDeleteNote(id);
     }
   };
 
