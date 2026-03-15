@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import type { Editor } from '@tiptap/react';
-import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
+import { ArrowUp, ArrowDown, Plus, Minus, Trash2 } from 'lucide-react';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 
 interface Props {
@@ -89,52 +89,56 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
       <BubbleMenu
         editor={editor}
         shouldShow={({ editor }) => editor.isActive('table')}
-        className="flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1"
+        className="flex items-center gap-1 bg-popover border border-border rounded-lg shadow-lg p-1.5"
       >
-        {/* Row movement */}
+        {/* Row movement: ↑ ↓ */}
         <MenuButton
           onClick={() => moveRowUp(editor)}
-          icon={<ArrowUp className="w-3.5 h-3.5" />}
+          icon={<ArrowUp className="w-4 h-4" />}
           label="Move row up"
         />
         <MenuButton
           onClick={() => moveRowDown(editor)}
-          icon={<ArrowDown className="w-3.5 h-3.5" />}
+          icon={<ArrowDown className="w-4 h-4" />}
           label="Move row down"
         />
-        <div className="w-px h-5 bg-border mx-0.5" />
-        {/* Add / remove rows */}
+        <div className="w-px h-5 bg-border mx-1" />
+        {/* Add / remove rows: +row, −row */}
         <MenuButton
           onClick={() => editor.chain().focus().addRowAfter().run()}
-          icon={<><Plus className="w-3 h-3" /><Rows3 className="w-3.5 h-3.5" /></>}
+          icon={<Plus className="w-4 h-4" />}
           label="Add row"
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteRow().run()}
-          icon={<><Minus className="w-3 h-3" /><Rows3 className="w-3.5 h-3.5" /></>}
+          icon={<Minus className="w-4 h-4" />}
           label="Delete row"
           destructive
         />
-        {/* Add / remove columns */}
+        <div className="w-px h-5 bg-border mx-1" />
+        {/* Add / remove columns: +col, −col */}
         <MenuButton
           onClick={() => editor.chain().focus().addColumnAfter().run()}
-          icon={<><Plus className="w-3 h-3" /><Columns3 className="w-3.5 h-3.5" /></>}
+          icon={<Plus className="w-4 h-4" />}
           label="Add column"
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteColumn().run()}
-          icon={<><Minus className="w-3 h-3" /><Columns3 className="w-3.5 h-3.5" /></>}
+          icon={<Minus className="w-4 h-4" />}
           label="Delete column"
           destructive
         />
-        <div className="w-px h-5 bg-border mx-0.5" />
-        {/* Delete table */}
-        <MenuButton
-          onClick={handleDeleteTable}
-          icon={<Trash2 className="w-3.5 h-3.5" />}
-          label="Delete table"
-          destructive
-        />
+        <div className="w-px h-5 bg-border mx-1" />
+        {/* Delete table: 🗑 */}
+        <div className="flex items-center gap-1.5">
+          <MenuButton
+            onClick={handleDeleteTable}
+            icon={<Trash2 className="w-4 h-4" />}
+            label="Delete table"
+            destructive
+          />
+          <span className="text-destructive text-xs font-medium pr-0.5">Delete table</span>
+        </div>
       </BubbleMenu>
 
       <ConfirmDeleteDialog
@@ -156,7 +160,7 @@ function MenuButton({ onClick, icon, label, destructive }: { onClick: () => void
     <button
       onClick={onClick}
       title={label}
-      className={`p-1.5 rounded-md transition-colors flex items-center gap-0.5 ${
+      className={`p-1.5 rounded-md transition-colors ${
         destructive
           ? 'text-destructive hover:bg-destructive/10'
           : 'text-muted-foreground hover:text-foreground hover:bg-accent'
