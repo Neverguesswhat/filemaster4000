@@ -20,6 +20,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   const handleSummarize = useCallback(async () => {
     if (!note.content || note.content.trim() === '' || note.content === '<p></p>') {
