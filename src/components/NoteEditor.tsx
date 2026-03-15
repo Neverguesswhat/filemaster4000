@@ -185,6 +185,29 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
         />
       </div>
 
+      {/* AI Summary */}
+      {(summary || isSummarizing) && (
+        <div className="mx-6 mt-4 p-4 rounded-lg border border-primary/20 bg-primary/5 relative">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-primary uppercase tracking-wide">AI Summary</span>
+            {!isSummarizing && (
+              <button onClick={() => setSummary(null)} className="ml-auto p-0.5 rounded hover:bg-primary/10 text-muted-foreground hover:text-foreground transition-colors">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+          {isSummarizing ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Generating summary…</span>
+            </div>
+          ) : (
+            <p className="text-sm text-foreground leading-relaxed">{summary}</p>
+          )}
+        </div>
+      )}
+
       {/* Editor area */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[700px] mx-auto px-6 py-8">
