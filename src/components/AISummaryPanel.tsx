@@ -24,11 +24,12 @@ interface Props {
   confirmDeleteAiChat: boolean;
 }
 
-export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded, onClearSummary }: Props) {
+export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded, onClearSummary, confirmDeleteAiChat }: Props) {
   const [followUp, setFollowUp] = useState('');
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [isAsking, setIsAsking] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // Reset and load existing conversation for this note
   useEffect(() => {
