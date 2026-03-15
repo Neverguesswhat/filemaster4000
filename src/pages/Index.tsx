@@ -4,7 +4,7 @@ import { useSettings } from '@/hooks/useSettings';
 import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsPanel } from '@/components/SettingsPanel';
-import { FileText } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 
 const Index = () => {
   const {
