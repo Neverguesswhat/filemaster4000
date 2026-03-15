@@ -110,3 +110,24 @@
 .tiptap-editor .ProseMirror hr {
   @apply border-border my-6;
 }
+
+.tiptap-editor .ProseMirror table {
+  @apply border-collapse w-full my-4 rounded-lg overflow-hidden;
+}
+
+.tiptap-editor .ProseMirror table td,
+.tiptap-editor .ProseMirror table th {
+  @apply border border-border px-3 py-2 text-sm align-top min-w-[80px];
+}
+
+.tiptap-editor .ProseMirror table th {
+  @apply bg-muted font-semibold text-left;
+}
+
+.tiptap-editor .ProseMirror table td {
+  @apply bg-background;
+}
+
+.tiptap-editor .ProseMirror table .selectedCell {
+  @apply bg-primary/10;
+}
