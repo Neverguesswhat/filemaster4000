@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import type { Editor } from '@tiptap/react';
-import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
+import { ArrowUp, ArrowDown, Plus, Minus, Trash2 } from 'lucide-react';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 
 interface Props {
