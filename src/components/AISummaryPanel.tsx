@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Sparkles, X, Loader2, Send, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -30,6 +30,8 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
   const [isAsking, setIsAsking] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const lastSavedSignatureRef = useRef<string | null>(null);
+  const suppressSaveRef = useRef(false);
 
   // Reset and load existing conversation for this note
   useEffect(() => {
@@ -38,6 +40,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     // Immediately reset state to prevent showing stale data from another note
     setConversationId(null);
     setConversation([]);
+    lastSavedSignatureRef.current = null;
 
     const loadConversation = async () => {
       const { data, error } = await supabase
@@ -51,9 +54,11 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
       if (!isCurrent) return;
 
       if (!error && data) {
+        const loadedConversation = (data.conversation as unknown as ConversationItem[]) || [];
         setConversationId(data.id);
-        setConversation((data.conversation as unknown as ConversationItem[]) || []);
+        setConversation(loadedConversation);
         onSummaryLoaded(data.summary);
+        lastSavedSignatureRef.current = `${noteId}::${data.summary}::${JSON.stringify(loadedConversation)}`;
       }
     };
 
@@ -64,9 +69,22 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     };
   }, [noteId, onSummaryLoaded]);
 
+  // Re-enable autosave after deletion clears summary
+  useEffect(() => {
+    if (!summary) {
+      suppressSaveRef.current = false;
+    }
+  }, [summary]);
+
   // Save conversation when summary or conversation changes
   useEffect(() => {
-    if (!summary) return;
+    if (!summary || suppressSaveRef.current) return;
+
+    const signature = `${noteId}::${summary}::${JSON.stringify(conversation)}`;
+    if (signature === lastSavedSignatureRef.current) return;
+
+    let isCurrent = true;
+
     const save = async () => {
       const convJson = JSON.parse(JSON.stringify(conversation));
       const payload = {
@@ -76,30 +94,48 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         updated_at: new Date().toISOString(),
       };
 
-      if (conversationId) {
-        await supabase.from('ai_conversations').update(payload).eq('id', conversationId);
-        return;
+      let targetId = conversationId;
+
+      if (!targetId) {
+        const { data: existingRows } = await supabase
+          .from('ai_conversations')
+          .select('id')
+          .eq('note_id', noteId)
+          .order('updated_at', { ascending: false });
+
+        if (existingRows && existingRows.length > 0) {
+          targetId = existingRows[0].id;
+          const duplicateIds = existingRows.slice(1).map((row) => row.id);
+
+          if (duplicateIds.length > 0) {
+            await supabase.from('ai_conversations').delete().in('id', duplicateIds);
+          }
+        }
       }
 
-      const { data: existing } = await supabase
-        .from('ai_conversations')
-        .select('id')
-        .eq('note_id', noteId)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (existing?.id) {
-        await supabase.from('ai_conversations').update(payload).eq('id', existing.id);
-        setConversationId(existing.id);
-        return;
+      if (targetId) {
+        await supabase.from('ai_conversations').update(payload).eq('id', targetId);
+        if (!conversationId && isCurrent) {
+          setConversationId(targetId);
+        }
+      } else {
+        const { data } = await supabase.from('ai_conversations').insert([payload]).select().single();
+        if (data && isCurrent) {
+          setConversationId(data.id);
+        }
       }
 
-      const { data } = await supabase.from('ai_conversations').insert([payload]).select().single();
-      if (data) setConversationId(data.id);
+      if (isCurrent) {
+        lastSavedSignatureRef.current = signature;
+      }
     };
+
     save();
-  }, [summary, conversation, noteId, conversationId]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [summary, conversation, noteId]);
 
   const handleAsk = useCallback(async () => {
     if (!followUp.trim() || !summary) return;
@@ -130,14 +166,15 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
   }, [followUp, summary, conversation, noteContent, noteTitle]);
 
   const executeDelete = useCallback(async () => {
-    if (!conversationId) return;
-    await supabase.from('ai_conversations').delete().eq('id', conversationId);
+    suppressSaveRef.current = true;
+    await supabase.from('ai_conversations').delete().eq('note_id', noteId);
     setConversationId(null);
     setConversation([]);
+    lastSavedSignatureRef.current = null;
     onClearSummary();
     setShowDeleteConfirm(false);
     toast.success('AI conversation deleted');
-  }, [conversationId, onClearSummary]);
+  }, [noteId, onClearSummary]);
 
   const handleDelete = useCallback(() => {
     if (confirmDeleteAiChat) {
