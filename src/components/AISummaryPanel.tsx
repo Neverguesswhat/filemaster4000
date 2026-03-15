@@ -32,6 +32,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const lastSavedSignatureRef = useRef<string | null>(null);
   const suppressSaveRef = useRef(false);
+  const loadedRef = useRef(false);
 
   // Reset and load existing conversation for this note
   useEffect(() => {
