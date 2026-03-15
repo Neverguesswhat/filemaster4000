@@ -21,6 +21,7 @@ interface Props {
   onClose: () => void;
   onSummaryLoaded: (summary: string) => void;
   onClearSummary: () => void;
+  confirmDeleteAiChat: boolean;
 }
 
 export function AISummaryPanel({ open, summary, isSummarizing, noteContent, noteTitle, noteId, onClose, onSummaryLoaded, onClearSummary }: Props) {
