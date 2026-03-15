@@ -81,7 +81,6 @@ export function TableBubbleMenu({ editor }: Props) {
   return (
     <BubbleMenu
       editor={editor}
-      tippyOptions={{ duration: 150, placement: 'top' }}
       shouldShow={({ editor }) => editor.isActive('table')}
       className="flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1"
     >
