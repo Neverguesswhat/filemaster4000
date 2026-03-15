@@ -20,9 +20,10 @@ interface Props {
   onUpdateContent: (content: string) => void;
   onAddMedia: (file: File) => Promise<string>;
   confirmDeleteAiChat: boolean;
+  confirmDeleteTable: boolean;
 }
 
-export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat }: Props) {
+export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat, confirmDeleteTable }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [summaryNoteId, setSummaryNoteId] = useState<string | null>(null);
