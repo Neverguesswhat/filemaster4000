@@ -271,9 +271,9 @@ function FolderItem({
           <Folder className="w-4 h-4 text-muted-foreground shrink-0" />
         )}
         <span className="text-sm text-foreground truncate flex-1">{folder.name}</span>
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
           {totalSubfolders > 0 && (
-            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-medium rounded-full bg-accent text-muted-foreground" title={`${totalSubfolders} subfolder${totalSubfolders > 1 ? 's' : ''}`}>
+            <span className="text-[10px] font-medium text-muted-foreground" title={`${totalSubfolders} subfolder${totalSubfolders > 1 ? 's' : ''}`}>
               {totalSubfolders}
             </span>
           )}
