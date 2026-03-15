@@ -200,7 +200,9 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
         isSummarizing={isSummarizing}
         noteContent={note.content}
         noteTitle={note.title}
+        noteId={note.id}
         onClose={() => setSummary(null)}
+        onSummaryLoaded={(s) => setSummary(s)}
       />
 
       {/* Editor area */}

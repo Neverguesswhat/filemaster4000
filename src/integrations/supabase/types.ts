@@ -14,7 +14,94 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_conversations: {
+        Row: {
+          conversation: Json
+          created_at: string
+          id: string
+          note_id: string
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          conversation?: Json
+          created_at?: string
+          id?: string
+          note_id: string
+          summary: string
+          updated_at?: string
+        }
+        Update: {
+          conversation?: Json
+          created_at?: string
+          id?: string
+          note_id?: string
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversations_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      folders: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          content: string
+          created_at: string
+          folder_id: string | null
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
