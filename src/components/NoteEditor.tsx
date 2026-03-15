@@ -213,6 +213,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia }:
         noteId={note.id}
         onClose={() => setAiPanelOpen(false)}
         onSummaryLoaded={(s) => setSummary(s)}
+        onClearSummary={() => setSummary(null)}
       />
 
       {/* Editor area */}

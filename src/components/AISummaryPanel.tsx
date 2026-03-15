@@ -106,9 +106,20 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
         <SheetHeader className="px-5 py-4 border-b border-border">
-          <SheetTitle className="flex items-center gap-2 text-sm">
-            <Sparkles className="w-4 h-4 text-primary" />
-            AI Summary
+          <SheetTitle className="flex items-center justify-between text-sm">
+            <span className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              AI Summary
+            </span>
+            {summary && !isSummarizing && (
+              <button
+                onClick={handleDelete}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                title="Delete conversation"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
           </SheetTitle>
         </SheetHeader>
 
