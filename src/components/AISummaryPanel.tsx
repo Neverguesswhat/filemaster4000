@@ -105,14 +105,23 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
     }
   }, [followUp, summary, conversation, noteContent, noteTitle]);
 
-  const handleDelete = useCallback(async () => {
+  const executeDelete = useCallback(async () => {
     if (!conversationId) return;
     await supabase.from('ai_conversations').delete().eq('id', conversationId);
     setConversationId(null);
     setConversation([]);
     onClearSummary();
+    setShowDeleteConfirm(false);
     toast.success('AI conversation deleted');
   }, [conversationId, onClearSummary]);
+
+  const handleDelete = useCallback(() => {
+    if (confirmDeleteAiChat) {
+      setShowDeleteConfirm(true);
+    } else {
+      executeDelete();
+    }
+  }, [confirmDeleteAiChat, executeDelete]);
 
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
