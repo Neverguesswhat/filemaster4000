@@ -68,6 +68,10 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
       StarterKit,
       Image.configure({ inline: false, allowBase64: true }),
       Placeholder.configure({ placeholder: 'Start writing...' }),
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableCell,
+      TableHeader,
     ],
     content: note.content || '',
     onUpdate: ({ editor }) => {
