@@ -251,7 +251,7 @@ function FolderItem({
           e.stopPropagation();
           e.dataTransfer.setData('folderId', folder.id);
         }}
-        className={`group flex items-center gap-1.5 py-1.5 pr-3 mx-1 rounded-md cursor-pointer transition-colors ${
+        className={`group relative flex items-center gap-1.5 py-1.5 pr-4 mx-1 rounded-md cursor-pointer transition-colors ${
           isDragOver ? 'bg-primary/10 ring-1 ring-primary' : 'hover:bg-accent'
         }`}
         style={{ paddingLeft }}
@@ -271,7 +271,9 @@ function FolderItem({
           <Folder className="w-4 h-4 text-muted-foreground shrink-0" />
         )}
         <span className="text-sm text-foreground truncate flex-1">{folder.name}</span>
-        <div className="flex items-center gap-2 shrink-0 ml-auto">
+
+        {/* Badges — visible by default, hidden on hover when action buttons show */}
+        <div className="flex items-center gap-2 shrink-0 group-hover:invisible">
           {totalSubfolders > 0 && (
             <span className="text-[10px] font-medium text-muted-foreground" title={`${totalSubfolders} subfolder${totalSubfolders > 1 ? 's' : ''}`}>
               {totalSubfolders}
@@ -281,20 +283,24 @@ function FolderItem({
             {totalFiles}
           </span>
         </div>
-        <button
-          onClick={e => { e.stopPropagation(); onCreateNote(folder.id); }}
-          className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-primary transition-opacity"
-          title="New note in folder"
-        >
-          <Plus className="w-3 h-3" />
-        </button>
-        <button
-          onClick={e => { e.stopPropagation(); onDeleteFolder(folder); }}
-          className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-destructive transition-opacity"
-          title="Delete folder"
-        >
-          <Trash2 className="w-3 h-3" />
-        </button>
+
+        {/* Action buttons — hidden by default, shown on hover in same position */}
+        <div className="absolute right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={e => { e.stopPropagation(); onCreateNote(folder.id); }}
+            className="p-0.5 hover:text-primary"
+            title="New note in folder"
+          >
+            <Plus className="w-3 h-3" />
+          </button>
+          <button
+            onClick={e => { e.stopPropagation(); onDeleteFolder(folder); }}
+            className="p-0.5 hover:text-destructive"
+            title="Delete folder"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        </div>
       </div>
 
       {isExpanded && (
