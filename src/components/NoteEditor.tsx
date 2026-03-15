@@ -132,7 +132,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
     if (!file || !editor) return;
     const dataUrl = await onAddMedia(file);
     if (file.type.startsWith('image/')) {
-      editor.chain().focus().setImage({ src: dataUrl, alt: file.name } as any).run();
+      (editor.chain().focus() as any).setImage({ src: dataUrl, alt: file.name }).run();
     }
     e.target.value = '';
   }, [editor, onAddMedia]);
