@@ -210,15 +210,22 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
       </div>
 
       <AISummaryPanel
+        key={note.id}
         open={aiPanelOpen}
-        summary={summary}
+        summary={scopedSummary}
         isSummarizing={isSummarizing}
         noteContent={note.content}
         noteTitle={note.title}
         noteId={note.id}
         onClose={() => setAiPanelOpen(false)}
-        onSummaryLoaded={(s) => setSummary(s)}
-        onClearSummary={() => setSummary(null)}
+        onSummaryLoaded={(s) => {
+          setSummary(s);
+          setSummaryNoteId(note.id);
+        }}
+        onClearSummary={() => {
+          setSummary(null);
+          setSummaryNoteId(note.id);
+        }}
         confirmDeleteAiChat={confirmDeleteAiChat}
       />
 
