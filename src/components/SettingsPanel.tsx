@@ -8,9 +8,11 @@ interface Props {
   onClose: () => void;
   confirmDelete: boolean;
   onToggleConfirmDelete: (value: boolean) => void;
+  confirmDeleteAiChat: boolean;
+  onToggleConfirmDeleteAiChat: (value: boolean) => void;
 }
 
-export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete }: Props) {
+export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat }: Props) {
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="sm:max-w-sm">
@@ -31,6 +33,18 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
               id="confirm-delete"
               checked={confirmDelete}
               onCheckedChange={onToggleConfirmDelete}
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <Label htmlFor="confirm-delete-ai" className="flex flex-col gap-1 cursor-pointer">
+              <span className="text-sm font-medium">AI chat delete confirmation</span>
+              <span className="text-xs text-muted-foreground font-normal">Show a confirmation dialog before deleting AI conversations</span>
+            </Label>
+            <Switch
+              id="confirm-delete-ai"
+              checked={confirmDeleteAiChat}
+              onCheckedChange={onToggleConfirmDeleteAiChat}
             />
           </div>
         </div>
