@@ -20,8 +20,10 @@ interface Props {
 export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
+  const [summaryNoteId, setSummaryNoteId] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const scopedSummary = summaryNoteId === note.id ? summary : null;
 
   // Reset AI state when switching notes
   useEffect(() => {
@@ -37,6 +39,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
     }
     setIsSummarizing(true);
     setSummary(null);
+    setSummaryNoteId(note.id);
     setAiPanelOpen(true);
     try {
       const { data, error } = await supabase.functions.invoke('summarize-note', {
@@ -47,6 +50,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
         toast.error(data.error);
       } else {
         setSummary(data.summary);
+        setSummaryNoteId(note.id);
       }
     } catch (e) {
       console.error('Summarize error:', e);
@@ -189,12 +193,12 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
         />
         <div className="w-px h-5 bg-border mx-1" />
         <button
-          onClick={() => { summary ? setAiPanelOpen(true) : handleSummarize(); }}
+          onClick={() => { scopedSummary ? setAiPanelOpen(true) : handleSummarize(); }}
           disabled={isSummarizing}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
         >
           {isSummarizing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-          {summary ? 'AI Summary' : 'Summarize'}
+          {scopedSummary ? 'AI Summary' : 'Summarize'}
         </button>
         <input
           ref={fileInputRef}
@@ -206,15 +210,22 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
       </div>
 
       <AISummaryPanel
+        key={note.id}
         open={aiPanelOpen}
-        summary={summary}
+        summary={scopedSummary}
         isSummarizing={isSummarizing}
         noteContent={note.content}
         noteTitle={note.title}
         noteId={note.id}
         onClose={() => setAiPanelOpen(false)}
-        onSummaryLoaded={(s) => setSummary(s)}
-        onClearSummary={() => setSummary(null)}
+        onSummaryLoaded={(s) => {
+          setSummary(s);
+          setSummaryNoteId(note.id);
+        }}
+        onClearSummary={() => {
+          setSummary(null);
+          setSummaryNoteId(note.id);
+        }}
         confirmDeleteAiChat={confirmDeleteAiChat}
       />
 

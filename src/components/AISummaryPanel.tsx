@@ -33,6 +33,8 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
 
   // Reset and load existing conversation for this note
   useEffect(() => {
+    let isCurrent = true;
+
     // Immediately reset state to prevent showing stale data from another note
     setConversationId(null);
     setConversation([]);
@@ -46,14 +48,21 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
         .limit(1)
         .maybeSingle();
 
+      if (!isCurrent) return;
+
       if (!error && data) {
         setConversationId(data.id);
         setConversation((data.conversation as unknown as ConversationItem[]) || []);
         onSummaryLoaded(data.summary);
       }
     };
+
     loadConversation();
-  }, [noteId]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [noteId, onSummaryLoaded]);
 
   // Save conversation when summary or conversation changes
   useEffect(() => {
@@ -69,10 +78,25 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
 
       if (conversationId) {
         await supabase.from('ai_conversations').update(payload).eq('id', conversationId);
-      } else {
-        const { data } = await supabase.from('ai_conversations').insert([payload]).select().single();
-        if (data) setConversationId(data.id);
+        return;
       }
+
+      const { data: existing } = await supabase
+        .from('ai_conversations')
+        .select('id')
+        .eq('note_id', noteId)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (existing?.id) {
+        await supabase.from('ai_conversations').update(payload).eq('id', existing.id);
+        setConversationId(existing.id);
+        return;
+      }
+
+      const { data } = await supabase.from('ai_conversations').insert([payload]).select().single();
+      if (data) setConversationId(data.id);
     };
     save();
   }, [summary, conversation, noteId, conversationId]);
