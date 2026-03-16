@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Note, Folder } from '@/types/notes';
@@ -8,6 +8,13 @@ export function useNotes() {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const debounceTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
+  useEffect(() => {
+    return () => {
+      debounceTimers.current.forEach(t => clearTimeout(t));
+    };
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -168,25 +175,40 @@ export function useNotes() {
     return note;
   }, []);
 
-  const updateNote = useCallback(async (id: string, updates: Partial<Pick<Note, 'title' | 'content' | 'folderId' | 'pinned'>>) => {
-    const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-    if (updates.title !== undefined) dbUpdates.title = updates.title;
-    if (updates.content !== undefined) dbUpdates.content = updates.content;
-    if (updates.folderId !== undefined) dbUpdates.folder_id = updates.folderId;
-    if (updates.pinned !== undefined) dbUpdates.pinned = updates.pinned;
-
-    const { error } = await supabase.from('notes').update(dbUpdates).eq('id', id);
-    if (error) { console.error('Failed to save note:', error); return; }
+  // Update note: immediately updates local state, debounces DB write
+  const updateNote = useCallback((id: string, updates: Partial<Pick<Note, 'title' | 'content' | 'folderId' | 'pinned'>>) => {
+    // Update local state immediately
     setNotes(prev => prev.map(n => n.id === id ? { ...n, ...updates, updatedAt: Date.now() } : n));
+
+    // Debounce DB write
+    const timerKey = id;
+    const existing = debounceTimers.current.get(timerKey);
+    if (existing) clearTimeout(existing);
+
+    debounceTimers.current.set(timerKey, setTimeout(async () => {
+      debounceTimers.current.delete(timerKey);
+      const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+      if (updates.title !== undefined) dbUpdates.title = updates.title;
+      if (updates.content !== undefined) dbUpdates.content = updates.content;
+      if (updates.folderId !== undefined) dbUpdates.folder_id = updates.folderId;
+      if (updates.pinned !== undefined) dbUpdates.pinned = updates.pinned;
+
+      const { error } = await supabase.from('notes').update(dbUpdates).eq('id', id);
+      if (error) console.error('Failed to save note:', error);
+    }, 500));
   }, []);
 
-  const togglePin = useCallback(async (id: string) => {
+  const togglePin = useCallback((id: string) => {
     const note = notes.find(n => n.id === id);
     if (!note) return;
-    await updateNote(id, { pinned: !note.pinned });
+    updateNote(id, { pinned: !note.pinned });
   }, [notes, updateNote]);
 
   const deleteNote = useCallback(async (id: string) => {
+    // Clear any pending debounce for this note
+    const timer = debounceTimers.current.get(id);
+    if (timer) { clearTimeout(timer); debounceTimers.current.delete(id); }
+
     const { error } = await supabase.from('notes').delete().eq('id', id);
     if (error) { toast.error('Failed to delete note'); return; }
     setNotes(prev => prev.filter(n => n.id !== id));
