@@ -189,7 +189,6 @@ export function FolderSidebar({
               {pinnedNotes.length > 0 && (
                 <div className="mb-2">
                   <div className="flex items-center px-4 py-1">
-                    <Pin className="w-3 h-3 text-primary mr-1.5" />
                     <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pinned files</h3>
                   </div>
                   {pinnedNotes.map(note => (
@@ -208,10 +207,7 @@ export function FolderSidebar({
 
               {/* Folders section title */}
               <div className="flex items-center justify-between px-4 py-1 mt-2">
-                <div className="flex items-center">
-                  <Folder className="w-3 h-3 text-primary mr-1.5" />
-                  <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Folders</h3>
-                </div>
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Folders</h3>
                 <button
                   onClick={() => setIsAddingFolder(true)}
                   className="p-1 rounded text-primary hover:bg-accent transition-colors"
