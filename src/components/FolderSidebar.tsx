@@ -214,10 +214,10 @@ export function FolderSidebar({
                 </div>
                 <button
                   onClick={() => setIsAddingFolder(true)}
-                  className="p-0.5 rounded text-primary hover:bg-accent transition-colors"
+                  className="p-1 rounded text-primary hover:bg-accent transition-colors"
                   title="Add folder"
                 >
-                  <Plus className="w-3 h-3" />
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
 
