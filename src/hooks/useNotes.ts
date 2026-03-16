@@ -215,7 +215,7 @@ export function useNotes() {
     setActiveNoteId, createFolder, renameFolder,
     deleteFolderAndContents, deleteFolderKeepNotes,
     moveFolderToParent,
-    createNote, updateNote, deleteNote, moveNoteToFolder,
+    createNote, createNoteWithContent, updateNote, deleteNote, moveNoteToFolder,
     addMedia, unfiledNotes, getNotesByFolder,
     getChildFolders, getRootFolders, getDescendantFolderIds,
   };
