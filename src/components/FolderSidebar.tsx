@@ -213,6 +213,12 @@ export function FolderSidebar({
                 </div>
               )}
 
+              {/* Folders section title */}
+              <div className="flex items-center px-4 py-1 mt-2">
+                <Folder className="w-3 h-3 text-primary mr-1.5" />
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Folders</h3>
+              </div>
+
               {/* New folder input */}
               {isAddingFolder && (
                 <div className="px-3 py-1">
