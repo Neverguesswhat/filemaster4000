@@ -204,21 +204,56 @@ export function FolderSidebar({
           )}
         </div>
 
+        {/* Recording indicator */}
+        {isRecording && (
+          <div className="px-3 py-2 mx-2 mb-1 rounded-md bg-destructive/10 border border-destructive/20">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+              <span className="text-xs font-medium text-destructive">Recording...</span>
+            </div>
+            {recordingTranscript && (
+              <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{recordingTranscript}</p>
+            )}
+          </div>
+        )}
+
         {/* Bottom buttons */}
-        <div className="border-t border-border p-2 flex items-center gap-1">
+        <div className="border-t border-border p-2 flex flex-col gap-1">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onCreateNote(null)}
+              className="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              New Note
+            </button>
+            <button
+              onClick={onOpenSettings}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+              title="Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+          </div>
           <button
-            onClick={() => onCreateNote(null)}
-            className="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+            onClick={isRecording ? onStopRecording : onStartRecording}
+            className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
+              isRecording
+                ? 'text-destructive hover:bg-destructive/10'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            }`}
           >
-            <Plus className="w-4 h-4" />
-            New Note
-          </button>
-          <button
-            onClick={onOpenSettings}
-            className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
-            title="Settings"
-          >
-            <Settings className="w-4 h-4" />
+            {isRecording ? (
+              <>
+                <Square className="w-4 h-4 fill-current" />
+                Stop Recording
+              </>
+            ) : (
+              <>
+                <Mic className="w-4 h-4" />
+                Record Voice Note
+              </>
+            )}
           </button>
         </div>
       </aside>
