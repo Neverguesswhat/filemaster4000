@@ -29,8 +29,6 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { isRecording, transcript, startRecording, stopRecording } = useAudioTranscription();
   const voiceNoteIdRef = useRef<string | null>(null);
-    500
-  );
 
   const handleStartRecording = async () => {
     const note = await createNoteWithContent('Voice Note', '<p>Listening...</p>');
