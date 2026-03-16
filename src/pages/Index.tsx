@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNotes } from '@/hooks/useNotes';
 import { useSettings } from '@/hooks/useSettings';
+import { useTheme } from '@/hooks/useTheme';
 import { useAudioTranscription } from '@/hooks/useAudioTranscription';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsPanel } from '@/components/SettingsPanel';
@@ -14,11 +16,14 @@ const Index = () => {
     setActiveNoteId, createFolder,
     deleteFolderAndContents, deleteFolderKeepNotes, moveFolderToParent,
     createNote, createNoteWithContent, updateNote, deleteNote, moveNoteToFolder,
+    togglePin,
     addMedia, getNotesByFolder, getChildFolders, getRootFolders, getDescendantFolderIds,
   } = useNotes();
 
   const { settings, updateSetting } = useSettings();
+  const { theme, setTheme } = useTheme();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { isRecording, transcript, startRecording, stopRecording } = useAudioTranscription();
   const voiceNoteIdRef = useRef<string | null>(null);
 
@@ -30,7 +35,6 @@ const Index = () => {
     }
   };
 
-  // Sync transcript to the voice note in real-time
   useEffect(() => {
     if (isRecording && voiceNoteIdRef.current && transcript) {
       updateNote(voiceNoteIdRef.current, { content: `<p>${transcript}</p>` });
@@ -42,7 +46,6 @@ const Index = () => {
     const noteId = voiceNoteIdRef.current;
     voiceNoteIdRef.current = null;
     if (!text && noteId) {
-      // No speech detected — clean up the empty note
       deleteNote(noteId);
       toast.error('No speech was detected');
       return;
@@ -52,6 +55,18 @@ const Index = () => {
       toast.success('Voice note created');
     }
   };
+
+  // Keyboard shortcuts
+  const handleNewNote = useCallback(() => createNote(null), [createNote]);
+  const handleSearchFocus = useCallback(() => {
+    const input = document.querySelector<HTMLInputElement>('input[placeholder*="Search"]');
+    input?.focus();
+  }, []);
+
+  useKeyboardShortcuts({
+    onNewNote: handleNewNote,
+    onSearch: handleSearchFocus,
+  });
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
@@ -72,12 +87,15 @@ const Index = () => {
         onCreateNote={createNote}
         onDeleteNote={deleteNote}
         onMoveNote={moveNoteToFolder}
+        onTogglePin={togglePin}
         confirmDelete={settings.confirmDelete}
         onOpenSettings={() => setSettingsOpen(true)}
         isRecording={isRecording}
         recordingTranscript={transcript}
         onStartRecording={handleStartRecording}
         onStopRecording={handleStopRecording}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
       />
 
       {activeNote ? (
@@ -86,6 +104,7 @@ const Index = () => {
           onUpdateTitle={(title) => updateNote(activeNote.id, { title })}
           onUpdateContent={(content) => updateNote(activeNote.id, { content })}
           onAddMedia={(file) => addMedia(file)}
+          onTogglePin={togglePin}
           confirmDeleteAiChat={settings.confirmDeleteAiChat}
           confirmDeleteTable={settings.confirmDeleteTable}
           isRecording={isRecording}
@@ -109,6 +128,8 @@ const Index = () => {
         onToggleConfirmDeleteAiChat={(v) => updateSetting('confirmDeleteAiChat', v)}
         confirmDeleteTable={settings.confirmDeleteTable}
         onToggleConfirmDeleteTable={(v) => updateSetting('confirmDeleteTable', v)}
+        theme={theme}
+        onThemeChange={setTheme}
       />
     </div>
   );
