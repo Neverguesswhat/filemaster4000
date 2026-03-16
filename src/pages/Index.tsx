@@ -29,10 +29,6 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { isRecording, transcript, startRecording, stopRecording } = useAudioTranscription();
   const voiceNoteIdRef = useRef<string | null>(null);
-
-  // Debounced update for title and content (500ms)
-  const debouncedUpdateNote = useDebouncedCallback(
-    (id: string, updates: Parameters<typeof updateNote>[1]) => updateNote(id, updates),
     500
   );
 
