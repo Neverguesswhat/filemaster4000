@@ -35,6 +35,7 @@ export function FolderSidebar({
   onCreateFolder, onDeleteFolderAll, onDeleteFolderKeep, onMoveFolderToParent,
   onSelectNote, onCreateNote, onDeleteNote, onMoveNote,
   confirmDelete, onOpenSettings,
+  isRecording, recordingTranscript, onStartRecording, onStopRecording,
 }: Props) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
