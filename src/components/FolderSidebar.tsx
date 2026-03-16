@@ -135,7 +135,7 @@ export function FolderSidebar({
       <aside className="w-[250px] min-w-[250px] h-screen bg-secondary border-r border-border flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-[41px] border-b border-border">
-          <h2 className="text-sm font-semibold text-foreground tracking-wide uppercase">Folders</h2>
+          <h2 className="text-sm font-semibold text-foreground tracking-wide">File Master 4000</h2>
           <button
             onClick={() => setIsAddingFolder(true)}
             className="p-1 rounded-md text-primary hover:bg-accent transition-colors"
@@ -212,6 +212,12 @@ export function FolderSidebar({
                   ))}
                 </div>
               )}
+
+              {/* Folders section title */}
+              <div className="flex items-center px-4 py-1 mt-2">
+                <Folder className="w-3 h-3 text-primary mr-1.5" />
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Folders</h3>
+              </div>
 
               {/* New folder input */}
               {isAddingFolder && (
