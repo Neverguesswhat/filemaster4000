@@ -102,8 +102,8 @@ const Index = () => {
       {activeNote ? (
         <NoteEditor
           note={activeNote}
-          onUpdateTitle={(title) => debouncedUpdateNote(activeNote.id, { title })}
-          onUpdateContent={(content) => debouncedUpdateNote(activeNote.id, { content })}
+          onUpdateTitle={(title) => updateNote(activeNote.id, { title })}
+          onUpdateContent={(content) => updateNote(activeNote.id, { content })}
           onAddMedia={(file) => addMedia(file)}
           onTogglePin={togglePin}
           confirmDeleteAiChat={settings.confirmDeleteAiChat}
