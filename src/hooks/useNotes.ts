@@ -153,6 +153,26 @@ export function useNotes() {
     return note;
   }, []);
 
+  const createNoteWithContent = useCallback(async (title: string, content: string, folderId: string | null = null) => {
+    const { data, error } = await supabase.from('notes').insert({
+      title,
+      content,
+      folder_id: folderId,
+    }).select().single();
+    if (error) { toast.error('Failed to create note'); return; }
+    const note: Note = {
+      id: data.id,
+      title: data.title,
+      content: data.content,
+      folderId: data.folder_id,
+      createdAt: new Date(data.created_at).getTime(),
+      updatedAt: new Date(data.updated_at).getTime(),
+    };
+    setNotes(prev => [...prev, note]);
+    setActiveNoteId(note.id);
+    return note;
+  }, []);
+
   const updateNote = useCallback(async (id: string, updates: Partial<Pick<Note, 'title' | 'content' | 'folderId'>>) => {
     const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
     if (updates.title !== undefined) dbUpdates.title = updates.title;

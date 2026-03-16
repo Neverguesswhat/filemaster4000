@@ -1,6 +1,17 @@
 import { useState, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 
+interface SpeechRecognitionCompat extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+}
+
 interface UseAudioTranscriptionReturn {
   isRecording: boolean;
   transcript: string;
@@ -11,17 +22,17 @@ interface UseAudioTranscriptionReturn {
 export function useAudioTranscription(): UseAudioTranscriptionReturn {
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionCompat | null>(null);
   const transcriptRef = useRef('');
 
   const startRecording = useCallback(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    const SpeechRecognitionCtor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
       toast.error('Speech recognition is not supported in this browser. Try Chrome or Edge.');
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition: SpeechRecognitionCompat = new SpeechRecognitionCtor();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
