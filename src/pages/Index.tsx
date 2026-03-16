@@ -88,6 +88,7 @@ const Index = () => {
           onAddMedia={(file) => addMedia(file)}
           confirmDeleteAiChat={settings.confirmDeleteAiChat}
           confirmDeleteTable={settings.confirmDeleteTable}
+          isRecording={isRecording}
         />
       ) : (
         <div className="flex-1 flex items-center justify-center">
