@@ -1,22 +1,35 @@
 import { useState } from 'react';
 import { useNotes } from '@/hooks/useNotes';
 import { useSettings } from '@/hooks/useSettings';
+import { useAudioTranscription } from '@/hooks/useAudioTranscription';
 import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { FolderOpen } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Index = () => {
   const {
     notes, folders, unfiledNotes, activeNote, activeNoteId,
     setActiveNoteId, createFolder,
     deleteFolderAndContents, deleteFolderKeepNotes, moveFolderToParent,
-    createNote, updateNote, deleteNote, moveNoteToFolder,
+    createNote, createNoteWithContent, updateNote, deleteNote, moveNoteToFolder,
     addMedia, getNotesByFolder, getChildFolders, getRootFolders, getDescendantFolderIds,
   } = useNotes();
 
   const { settings, updateSetting } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { isRecording, transcript, startRecording, stopRecording } = useAudioTranscription();
+
+  const handleStopRecording = async () => {
+    const text = await stopRecording();
+    if (!text) {
+      toast.error('No speech was detected');
+      return;
+    }
+    await createNoteWithContent('Voice Note', `<p>${text}</p>`);
+    toast.success('Voice note created');
+  };
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
@@ -39,6 +52,10 @@ const Index = () => {
         onMoveNote={moveNoteToFolder}
         confirmDelete={settings.confirmDelete}
         onOpenSettings={() => setSettingsOpen(true)}
+        isRecording={isRecording}
+        recordingTranscript={transcript}
+        onStartRecording={startRecording}
+        onStopRecording={handleStopRecording}
       />
 
       {activeNote ? (
