@@ -531,8 +531,6 @@ const NoteItem = forwardRef<HTMLDivElement, {
       }`}
       style={{ paddingLeft }}
     >
-{note.pinned && <Pin className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />}
-      <FileText className="w-3.5 h-3.5 shrink-0 opacity-60" />
       <span className="text-sm truncate flex-1">{note.title || 'Untitled'}</span>
       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
