@@ -24,7 +24,7 @@ interface Props {
   isRecording?: boolean;
 }
 
-export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat, confirmDeleteTable }: Props) {
+export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat, confirmDeleteTable, isRecording }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [summaryNoteId, setSummaryNoteId] = useState<string | null>(null);
