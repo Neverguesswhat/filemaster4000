@@ -21,6 +21,7 @@ interface Props {
   onAddMedia: (file: File) => Promise<string>;
   confirmDeleteAiChat: boolean;
   confirmDeleteTable: boolean;
+  isRecording?: boolean;
 }
 
 export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat, confirmDeleteTable }: Props) {
