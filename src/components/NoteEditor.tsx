@@ -21,9 +21,10 @@ interface Props {
   onAddMedia: (file: File) => Promise<string>;
   confirmDeleteAiChat: boolean;
   confirmDeleteTable: boolean;
+  isRecording?: boolean;
 }
 
-export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat, confirmDeleteTable }: Props) {
+export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat, confirmDeleteTable, isRecording }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [summaryNoteId, setSummaryNoteId] = useState<string | null>(null);
@@ -121,7 +122,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
     if (editor && editor.getHTML() !== note.content) {
       editor.commands.setContent(note.content || '');
     }
-  }, [note.id]);
+  }, [note.id, note.content, editor]);
 
   const handleImageUpload = useCallback(async () => {
     fileInputRef.current?.click();
@@ -247,6 +248,12 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
       {/* Editor area */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[700px] mx-auto px-6 py-8">
+          {isRecording && (
+            <div className="flex items-center gap-2 px-3 py-2 mb-4 rounded-md bg-destructive/10 border border-destructive/20">
+              <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+              <span className="text-sm font-medium text-destructive">Recording...</span>
+            </div>
+          )}
           <input
             value={note.title}
             onChange={e => onUpdateTitle(e.target.value)}

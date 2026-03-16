@@ -204,18 +204,6 @@ export function FolderSidebar({
           )}
         </div>
 
-        {/* Recording indicator */}
-        {isRecording && (
-          <div className="px-3 py-2 mx-2 mb-1 rounded-md bg-destructive/10 border border-destructive/20">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
-              <span className="text-xs font-medium text-destructive">Recording...</span>
-            </div>
-            {recordingTranscript && (
-              <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{recordingTranscript}</p>
-            )}
-          </div>
-        )}
 
         {/* Actions Section */}
         <div className="border-t border-border p-2 space-y-1">
