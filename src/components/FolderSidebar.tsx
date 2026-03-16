@@ -242,7 +242,7 @@ export function FolderSidebar({
             ) : (
               <>
                 <Mic className="w-4 h-4" />
-                Record Voice Note
+                New voice note
               </>
             )}
           </button>
