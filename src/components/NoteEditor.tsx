@@ -122,7 +122,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
     if (editor && editor.getHTML() !== note.content) {
       editor.commands.setContent(note.content || '');
     }
-  }, [note.id]);
+  }, [note.id, note.content, editor]);
 
   const handleImageUpload = useCallback(async () => {
     fileInputRef.current?.click();
