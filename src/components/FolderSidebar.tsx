@@ -200,6 +200,7 @@ export function FolderSidebar({
                       onDelete={handleDeleteNote}
                       onTogglePin={onTogglePin}
                       depth={0}
+                      alignWithFolders
                     />
                   ))}
                 </div>
