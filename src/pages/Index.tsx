@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNotes } from '@/hooks/useNotes';
 import { useSettings } from '@/hooks/useSettings';
 import { useAudioTranscription } from '@/hooks/useAudioTranscription';
@@ -20,15 +20,37 @@ const Index = () => {
   const { settings, updateSetting } = useSettings();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { isRecording, transcript, startRecording, stopRecording } = useAudioTranscription();
+  const voiceNoteIdRef = useRef<string | null>(null);
+
+  const handleStartRecording = async () => {
+    const note = await createNoteWithContent('Voice Note', '<p>Listening...</p>');
+    if (note) {
+      voiceNoteIdRef.current = note.id;
+      startRecording();
+    }
+  };
+
+  // Sync transcript to the voice note in real-time
+  useEffect(() => {
+    if (isRecording && voiceNoteIdRef.current && transcript) {
+      updateNote(voiceNoteIdRef.current, { content: `<p>${transcript}</p>` });
+    }
+  }, [transcript, isRecording, updateNote]);
 
   const handleStopRecording = async () => {
     const text = await stopRecording();
-    if (!text) {
+    const noteId = voiceNoteIdRef.current;
+    voiceNoteIdRef.current = null;
+    if (!text && noteId) {
+      // No speech detected — clean up the empty note
+      deleteNote(noteId);
       toast.error('No speech was detected');
       return;
     }
-    await createNoteWithContent('Voice Note', `<p>${text}</p>`);
-    toast.success('Voice note created');
+    if (noteId && text) {
+      await updateNote(noteId, { content: `<p>${text}</p>` });
+      toast.success('Voice note created');
+    }
   };
 
   return (
@@ -54,7 +76,7 @@ const Index = () => {
         onOpenSettings={() => setSettingsOpen(true)}
         isRecording={isRecording}
         recordingTranscript={transcript}
-        onStartRecording={startRecording}
+        onStartRecording={handleStartRecording}
         onStopRecording={handleStopRecording}
       />
 
