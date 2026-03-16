@@ -30,6 +30,7 @@ export function useNotes() {
           title: n.title,
           content: n.content,
           folderId: n.folder_id,
+          pinned: (n as any).pinned ?? false,
           createdAt: new Date(n.created_at).getTime(),
           updatedAt: new Date(n.updated_at).getTime(),
         })));
@@ -59,15 +60,12 @@ export function useNotes() {
     setFolders(prev => prev.map(f => f.id === id ? { ...f, name } : f));
   }, []);
 
-  // Get all descendant folder IDs recursively
   const getDescendantFolderIds = useCallback((folderId: string, allFolders: Folder[]): string[] => {
     const children = allFolders.filter(f => f.parentId === folderId);
     return children.flatMap(c => [c.id, ...getDescendantFolderIds(c.id, allFolders)]);
   }, []);
 
   const deleteFolderAndContents = useCallback(async (id: string) => {
-    // CASCADE on parent_id handles child folders in DB
-    // Delete all notes in this folder and descendant folders
     const descendantIds = getDescendantFolderIds(id, folders);
     const allFolderIds = [id, ...descendantIds];
 
@@ -85,7 +83,6 @@ export function useNotes() {
     const descendantIds = getDescendantFolderIds(id, folders);
     const allFolderIds = [id, ...descendantIds];
 
-    // Get or create "To Sort" folder
     let toSortFolder = folders.find(f => f.name === 'To Sort' && f.parentId === null);
     if (!toSortFolder) {
       const { data, error } = await supabase.from('folders').insert({ name: 'To Sort' }).select().single();
@@ -94,21 +91,18 @@ export function useNotes() {
       setFolders(prev => [...prev, toSortFolder!]);
     }
 
-    // Move kept notes to "To Sort"
     if (noteIdsToKeep.length > 0) {
       for (const noteId of noteIdsToKeep) {
         await supabase.from('notes').update({ folder_id: toSortFolder.id }).eq('id', noteId);
       }
     }
 
-    // Delete notes not kept
     const allNotesInFolders = notes.filter(n => allFolderIds.includes(n.folderId ?? ''));
     const noteIdsToDelete = allNotesInFolders.filter(n => !noteIdsToKeep.includes(n.id)).map(n => n.id);
     for (const noteId of noteIdsToDelete) {
       await supabase.from('notes').delete().eq('id', noteId);
     }
 
-    // Delete the folder (cascade deletes children)
     const { error } = await supabase.from('folders').delete().eq('id', id);
     if (error) { toast.error('Failed to delete folder'); return; }
 
@@ -120,7 +114,6 @@ export function useNotes() {
   }, [folders, notes, getDescendantFolderIds]);
 
   const moveFolderToParent = useCallback(async (folderId: string, parentId: string | null) => {
-    // Prevent moving a folder into itself or its descendants
     if (parentId) {
       const descendantIds = getDescendantFolderIds(folderId, folders);
       if (parentId === folderId || descendantIds.includes(parentId)) {
@@ -145,6 +138,7 @@ export function useNotes() {
       title: data.title,
       content: data.content,
       folderId: data.folder_id,
+      pinned: false,
       createdAt: new Date(data.created_at).getTime(),
       updatedAt: new Date(data.updated_at).getTime(),
     };
@@ -165,6 +159,7 @@ export function useNotes() {
       title: data.title,
       content: data.content,
       folderId: data.folder_id,
+      pinned: false,
       createdAt: new Date(data.created_at).getTime(),
       updatedAt: new Date(data.updated_at).getTime(),
     };
@@ -173,16 +168,23 @@ export function useNotes() {
     return note;
   }, []);
 
-  const updateNote = useCallback(async (id: string, updates: Partial<Pick<Note, 'title' | 'content' | 'folderId'>>) => {
+  const updateNote = useCallback(async (id: string, updates: Partial<Pick<Note, 'title' | 'content' | 'folderId' | 'pinned'>>) => {
     const dbUpdates: Record<string, unknown> = { updated_at: new Date().toISOString() };
     if (updates.title !== undefined) dbUpdates.title = updates.title;
     if (updates.content !== undefined) dbUpdates.content = updates.content;
     if (updates.folderId !== undefined) dbUpdates.folder_id = updates.folderId;
+    if (updates.pinned !== undefined) dbUpdates.pinned = updates.pinned;
 
     const { error } = await supabase.from('notes').update(dbUpdates).eq('id', id);
     if (error) { console.error('Failed to save note:', error); return; }
     setNotes(prev => prev.map(n => n.id === id ? { ...n, ...updates, updatedAt: Date.now() } : n));
   }, []);
+
+  const togglePin = useCallback(async (id: string) => {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    await updateNote(id, { pinned: !note.pinned });
+  }, [notes, updateNote]);
 
   const deleteNote = useCallback(async (id: string) => {
     const { error } = await supabase.from('notes').delete().eq('id', id);
@@ -216,6 +218,7 @@ export function useNotes() {
     deleteFolderAndContents, deleteFolderKeepNotes,
     moveFolderToParent,
     createNote, createNoteWithContent, updateNote, deleteNote, moveNoteToFolder,
+    togglePin,
     addMedia, unfiledNotes, getNotesByFolder,
     getChildFolders, getRootFolders, getDescendantFolderIds,
   };

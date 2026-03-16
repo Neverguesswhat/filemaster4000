@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings, Mic, Square } from 'lucide-react';
+import { useState, useCallback, forwardRef, useMemo } from 'react';
+import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings, Mic, Square, Search, Pin, X } from 'lucide-react';
 import type { Folder as FolderType, Note } from '@/types/notes';
 import { DeleteFolderDialog } from './DeleteFolderDialog';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
@@ -21,21 +21,25 @@ interface Props {
   onCreateNote: (folderId: string | null) => void;
   onDeleteNote: (id: string) => void;
   onMoveNote: (noteId: string, folderId: string | null) => void;
+  onTogglePin: (id: string) => void;
   confirmDelete: boolean;
   onOpenSettings: () => void;
   isRecording: boolean;
   recordingTranscript: string;
   onStartRecording: () => void;
   onStopRecording: () => void;
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
 }
 
 export function FolderSidebar({
   folders, notes, unfiledNotes, getNotesByFolder, getChildFolders, getRootFolders,
   getDescendantFolderIds, activeNoteId,
   onCreateFolder, onDeleteFolderAll, onDeleteFolderKeep, onMoveFolderToParent,
-  onSelectNote, onCreateNote, onDeleteNote, onMoveNote,
+  onSelectNote, onCreateNote, onDeleteNote, onMoveNote, onTogglePin,
   confirmDelete, onOpenSettings,
   isRecording, recordingTranscript, onStartRecording, onStopRecording,
+  searchQuery, onSearchChange,
 }: Props) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
@@ -44,6 +48,20 @@ export function FolderSidebar({
   const [deletingFolder, setDeletingFolder] = useState<FolderType | null>(null);
   const [confirmDeleteNote, setConfirmDeleteNote] = useState<Note | null>(null);
   const [confirmDeleteEmptyFolder, setConfirmDeleteEmptyFolder] = useState<FolderType | null>(null);
+
+  const isSearching = searchQuery.trim().length > 0;
+
+  const filteredNotes = useMemo(() => {
+    if (!isSearching) return null;
+    const q = searchQuery.toLowerCase();
+    return notes.filter(n =>
+      n.title.toLowerCase().includes(q) ||
+      n.content.toLowerCase().replace(/<[^>]+>/g, '').includes(q)
+    );
+  }, [notes, searchQuery, isSearching]);
+
+  // Pinned notes (shown at top when not searching)
+  const pinnedNotes = useMemo(() => notes.filter(n => n.pinned), [notes]);
 
   const toggleFolder = (id: string) => {
     setExpandedFolders(prev => {
@@ -127,83 +145,153 @@ export function FolderSidebar({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-2 min-h-0">
-          {/* New folder input */}
-          {isAddingFolder && (
-            <div className="px-3 py-1">
-              <input
-                autoFocus
-                value={newFolderName}
-                onChange={e => setNewFolderName(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') handleAddFolder();
-                  if (e.key === 'Escape') { setIsAddingFolder(false); setNewFolderName(''); }
-                }}
-                onBlur={handleAddFolder}
-                placeholder="Folder name..."
-                className="w-full px-2 py-1.5 text-sm bg-background border border-ring rounded-md outline-none placeholder:text-muted-foreground"
-              />
-            </div>
-          )}
-
-          {/* Recursive folder tree */}
-          {rootFolders.map(folder => (
-            <FolderItem
-              key={folder.id}
-              folder={folder}
-              depth={0}
-              expandedFolders={expandedFolders}
-              dragOverFolder={dragOverFolder}
-              activeNoteId={activeNoteId}
-              getNotesByFolder={getNotesByFolder}
-              getChildFolders={getChildFolders}
-              getDescendantFolderIds={getDescendantFolderIds}
-              allFolders={folders}
-              onToggle={toggleFolder}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={() => setDragOverFolder(null)}
-              onCreateNote={onCreateNote}
-              onDeleteFolder={handleDeleteFolder}
-              onSelectNote={onSelectNote}
-              onDeleteNote={handleDeleteNote}
+        {/* Search */}
+        <div className="px-3 pt-2 pb-1">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <input
+              value={searchQuery}
+              onChange={e => onSearchChange(e.target.value)}
+              placeholder="Search notes… (⌘K)"
+              className="w-full pl-8 pr-7 py-1.5 text-sm bg-background border border-input rounded-md outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-ring"
             />
-          ))}
+            {searchQuery && (
+              <button onClick={() => onSearchChange('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
 
-          {/* Unfiled notes */}
-          {unfiledNotes.length > 0 && (
-            <div className="mt-4">
-              <div className="flex items-center justify-between px-4 py-1">
-                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Notes</h3>
-                <button
-                  onClick={() => onCreateNote(null)}
-                  className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <Plus className="w-3 h-3" />
-                </button>
+        <div className="flex-1 overflow-y-auto py-2 min-h-0">
+          {/* Search results */}
+          {isSearching && filteredNotes && (
+            <div>
+              <div className="px-4 py-1">
+                <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  {filteredNotes.length} result{filteredNotes.length !== 1 ? 's' : ''}
+                </h3>
               </div>
-              {unfiledNotes.map(note => (
+              {filteredNotes.map(note => (
                 <NoteItem
                   key={note.id}
                   note={note}
                   isActive={note.id === activeNoteId}
                   onSelect={onSelectNote}
                   onDelete={handleDeleteNote}
+                  onTogglePin={onTogglePin}
                   depth={0}
                 />
               ))}
+              {filteredNotes.length === 0 && (
+                <p className="px-4 py-4 text-sm text-muted-foreground text-center">No notes found</p>
+              )}
             </div>
           )}
 
-          {rootFolders.length === 0 && unfiledNotes.length === 0 && (
-            <div className="px-4 py-8 text-center">
-              <FileText className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">No notes yet</p>
-              <p className="text-xs text-muted-foreground mt-1">Create a folder or note to get started</p>
-            </div>
+          {/* Normal view */}
+          {!isSearching && (
+            <>
+              {/* Pinned notes */}
+              {pinnedNotes.length > 0 && (
+                <div className="mb-2">
+                  <div className="flex items-center px-4 py-1">
+                    <Pin className="w-3 h-3 text-primary mr-1.5" />
+                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pinned</h3>
+                  </div>
+                  {pinnedNotes.map(note => (
+                    <NoteItem
+                      key={note.id}
+                      note={note}
+                      isActive={note.id === activeNoteId}
+                      onSelect={onSelectNote}
+                      onDelete={handleDeleteNote}
+                      onTogglePin={onTogglePin}
+                      depth={0}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* New folder input */}
+              {isAddingFolder && (
+                <div className="px-3 py-1">
+                  <input
+                    autoFocus
+                    value={newFolderName}
+                    onChange={e => setNewFolderName(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') handleAddFolder();
+                      if (e.key === 'Escape') { setIsAddingFolder(false); setNewFolderName(''); }
+                    }}
+                    onBlur={handleAddFolder}
+                    placeholder="Folder name..."
+                    className="w-full px-2 py-1.5 text-sm bg-background border border-ring rounded-md outline-none placeholder:text-muted-foreground"
+                  />
+                </div>
+              )}
+
+              {/* Recursive folder tree */}
+              {rootFolders.map(folder => (
+                <FolderItem
+                  key={folder.id}
+                  folder={folder}
+                  depth={0}
+                  expandedFolders={expandedFolders}
+                  dragOverFolder={dragOverFolder}
+                  activeNoteId={activeNoteId}
+                  getNotesByFolder={getNotesByFolder}
+                  getChildFolders={getChildFolders}
+                  getDescendantFolderIds={getDescendantFolderIds}
+                  allFolders={folders}
+                  onToggle={toggleFolder}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={() => setDragOverFolder(null)}
+                  onCreateNote={onCreateNote}
+                  onDeleteFolder={handleDeleteFolder}
+                  onSelectNote={onSelectNote}
+                  onDeleteNote={handleDeleteNote}
+                  onTogglePin={onTogglePin}
+                />
+              ))}
+
+              {/* Unfiled notes */}
+              {unfiledNotes.length > 0 && (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between px-4 py-1">
+                    <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Notes</h3>
+                    <button
+                      onClick={() => onCreateNote(null)}
+                      className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <Plus className="w-3 h-3" />
+                    </button>
+                  </div>
+                  {unfiledNotes.map(note => (
+                    <NoteItem
+                      key={note.id}
+                      note={note}
+                      isActive={note.id === activeNoteId}
+                      onSelect={onSelectNote}
+                      onDelete={handleDeleteNote}
+                      onTogglePin={onTogglePin}
+                      depth={0}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {rootFolders.length === 0 && unfiledNotes.length === 0 && (
+                <div className="px-4 py-8 text-center">
+                  <FileText className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">No notes yet</p>
+                  <p className="text-xs text-muted-foreground mt-1">Create a folder or note to get started</p>
+                </div>
+              )}
+            </>
           )}
         </div>
-
 
         {/* Actions Section */}
         <div className="border-t border-border p-2 space-y-1">
@@ -279,13 +367,8 @@ export function FolderSidebar({
   );
 }
 
-// Recursive folder component
-function FolderItem({
-  folder, depth, expandedFolders, dragOverFolder, activeNoteId,
-  getNotesByFolder, getChildFolders, getDescendantFolderIds, allFolders,
-  onToggle, onDrop, onDragOver, onDragLeave,
-  onCreateNote, onDeleteFolder, onSelectNote, onDeleteNote,
-}: {
+// Recursive folder component - wrapped with forwardRef to fix console warning
+const FolderItem = forwardRef<HTMLDivElement, {
   folder: FolderType;
   depth: number;
   expandedFolders: Set<string>;
@@ -303,21 +386,25 @@ function FolderItem({
   onDeleteFolder: (folder: FolderType) => void;
   onSelectNote: (id: string) => void;
   onDeleteNote: (id: string) => void;
-}) {
+  onTogglePin: (id: string) => void;
+}>(({
+  folder, depth, expandedFolders, dragOverFolder, activeNoteId,
+  getNotesByFolder, getChildFolders, getDescendantFolderIds, allFolders,
+  onToggle, onDrop, onDragOver, onDragLeave,
+  onCreateNote, onDeleteFolder, onSelectNote, onDeleteNote, onTogglePin,
+}, ref) => {
   const folderNotes = getNotesByFolder(folder.id);
   const childFolders = getChildFolders(folder.id);
   const isExpanded = expandedFolders.has(folder.id);
   const isDragOver = dragOverFolder === folder.id;
   const paddingLeft = 12 + depth * 16;
 
-  // Count all descendant subfolders
   const allDescendantIds = getDescendantFolderIds(folder.id, allFolders);
   const totalSubfolders = allDescendantIds.length;
-  // Count all files across this folder + all descendant folders
   const totalFiles = [folder.id, ...allDescendantIds].reduce((sum, fid) => sum + getNotesByFolder(fid).length, 0);
 
   return (
-    <div>
+    <div ref={ref}>
       <div
         draggable
         onDragStart={e => {
@@ -345,7 +432,6 @@ function FolderItem({
         )}
         <span className="text-sm text-foreground truncate flex-1">{folder.name}</span>
 
-        {/* Badges — visible by default, hidden on hover when action buttons show */}
         <div className="flex items-center gap-2 shrink-0 group-hover:invisible">
           {totalSubfolders > 0 && (
             <span className="text-[10px] font-medium text-muted-foreground" title={`${totalSubfolders} subfolder${totalSubfolders > 1 ? 's' : ''}`}>
@@ -357,7 +443,6 @@ function FolderItem({
           </span>
         </div>
 
-        {/* Action buttons — hidden by default, shown on hover in same position */}
         <div className="absolute right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={e => { e.stopPropagation(); onCreateNote(folder.id); }}
@@ -398,6 +483,7 @@ function FolderItem({
               onDeleteFolder={onDeleteFolder}
               onSelectNote={onSelectNote}
               onDeleteNote={onDeleteNote}
+              onTogglePin={onTogglePin}
             />
           ))}
           {folderNotes.map(note => (
@@ -407,6 +493,7 @@ function FolderItem({
               isActive={note.id === activeNoteId}
               onSelect={onSelectNote}
               onDelete={onDeleteNote}
+              onTogglePin={onTogglePin}
               depth={depth + 1}
             />
           ))}
@@ -414,18 +501,21 @@ function FolderItem({
       )}
     </div>
   );
-}
+});
+FolderItem.displayName = 'FolderItem';
 
-function NoteItem({ note, isActive, onSelect, onDelete, depth }: {
+const NoteItem = forwardRef<HTMLDivElement, {
   note: Note;
   isActive: boolean;
   onSelect: (id: string) => void;
   onDelete: (id: string) => void;
+  onTogglePin: (id: string) => void;
   depth: number;
-}) {
+}>(({ note, isActive, onSelect, onDelete, onTogglePin, depth }, ref) => {
   const paddingLeft = 28 + depth * 16;
   return (
     <div
+      ref={ref}
       draggable
       onDragStart={e => {
         e.stopPropagation();
@@ -437,14 +527,25 @@ function NoteItem({ note, isActive, onSelect, onDelete, depth }: {
       }`}
       style={{ paddingLeft }}
     >
+      {note.pinned && <Pin className="w-3 h-3 shrink-0 text-primary" />}
       <FileText className="w-3.5 h-3.5 shrink-0 opacity-60" />
       <span className="text-sm truncate flex-1">{note.title || 'Untitled'}</span>
-      <button
-        onClick={e => { e.stopPropagation(); onDelete(note.id); }}
-        className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-destructive transition-opacity"
-      >
-        <Trash2 className="w-3 h-3" />
-      </button>
+      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={e => { e.stopPropagation(); onTogglePin(note.id); }}
+          className={`p-0.5 ${note.pinned ? 'text-primary' : 'hover:text-primary'}`}
+          title={note.pinned ? 'Unpin' : 'Pin'}
+        >
+          <Pin className="w-3 h-3" />
+        </button>
+        <button
+          onClick={e => { e.stopPropagation(); onDelete(note.id); }}
+          className="p-0.5 hover:text-destructive"
+        >
+          <Trash2 className="w-3 h-3" />
+        </button>
+      </div>
     </div>
   );
-}
+});
+NoteItem.displayName = 'NoteItem';

@@ -7,11 +7,12 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
-import { Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Heading1, Heading2, ImagePlus, Minus, Sparkles, Loader2, TableIcon } from 'lucide-react';
+import { Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Heading1, Heading2, ImagePlus, Minus, Sparkles, Loader2, TableIcon, Download, Pin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AISummaryPanel } from './AISummaryPanel';
 import { TableBubbleMenu } from './TableBubbleMenu';
+import { exportAsMarkdown, exportAsPdf } from '@/lib/exportNote';
 import type { Note } from '@/types/notes';
 
 interface Props {
@@ -19,24 +20,26 @@ interface Props {
   onUpdateTitle: (title: string) => void;
   onUpdateContent: (content: string) => void;
   onAddMedia: (file: File) => Promise<string>;
+  onTogglePin: (id: string) => void;
   confirmDeleteAiChat: boolean;
   confirmDeleteTable: boolean;
   isRecording?: boolean;
 }
 
-export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, confirmDeleteAiChat, confirmDeleteTable, isRecording }: Props) {
+export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, onTogglePin, confirmDeleteAiChat, confirmDeleteTable, isRecording }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [summaryNoteId, setSummaryNoteId] = useState<string | null>(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const scopedSummary = summaryNoteId === note.id ? summary : null;
 
-  // Reset AI state when switching notes
   useEffect(() => {
     setSummary(null);
     setIsSummarizing(false);
     setAiPanelOpen(false);
+    setShowExportMenu(false);
   }, [note.id]);
 
   const handleSummarize = useCallback(async () => {
@@ -65,7 +68,8 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
     } finally {
       setIsSummarizing(false);
     }
-  }, [note.content, note.title]);
+  }, [note.content, note.title, note.id]);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -207,6 +211,35 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, c
           onClick={handleImageUpload}
           icon={<ImagePlus className="w-4 h-4" />}
         />
+        <ToolbarButton
+          active={note.pinned}
+          onClick={() => onTogglePin(note.id)}
+          icon={<Pin className="w-4 h-4" />}
+        />
+        {/* Export dropdown */}
+        <div className="relative">
+          <ToolbarButton
+            active={false}
+            onClick={() => setShowExportMenu(!showExportMenu)}
+            icon={<Download className="w-4 h-4" />}
+          />
+          {showExportMenu && (
+            <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-md shadow-lg py-1 z-20 min-w-[140px]">
+              <button
+                onClick={() => { exportAsMarkdown(note); setShowExportMenu(false); }}
+                className="w-full px-3 py-1.5 text-sm text-left text-popover-foreground hover:bg-accent transition-colors"
+              >
+                Export as Markdown
+              </button>
+              <button
+                onClick={() => { exportAsPdf(note); setShowExportMenu(false); }}
+                className="w-full px-3 py-1.5 text-sm text-left text-popover-foreground hover:bg-accent transition-colors"
+              >
+                Export as PDF
+              </button>
+            </div>
+          )}
+        </div>
         <div className="w-px h-5 bg-border mx-1" />
         <button
           onClick={() => { scopedSummary ? setAiPanelOpen(true) : handleSummarize(); }}
