@@ -136,13 +136,6 @@ export function FolderSidebar({
         {/* Header */}
         <div className="flex items-center justify-between px-4 h-[41px] border-b border-border">
           <h2 className="text-sm font-semibold text-foreground tracking-wide">File Master 4000</h2>
-          <button
-            onClick={() => setIsAddingFolder(true)}
-            className="p-1 rounded-md text-primary hover:bg-accent transition-colors"
-            title="Add folder"
-          >
-            <Plus className="w-4 h-4" />
-          </button>
         </div>
 
         {/* Search */}
