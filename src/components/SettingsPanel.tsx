@@ -1,13 +1,29 @@
-import { Settings } from 'lucide-react';
+import { useState } from 'react';
+import { Settings, Download, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { exportAllAsZip } from '@/lib/exportAll';
+import type { Note, Folder } from '@/types/notes';
+import { toast } from 'sonner';
 
 type Theme = 'light' | 'dark' | 'system';
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  confirmDelete: boolean;
+  onToggleConfirmDelete: (value: boolean) => void;
+  confirmDeleteAiChat: boolean;
+  onToggleConfirmDeleteAiChat: (value: boolean) => void;
+  confirmDeleteTable: boolean;
+  onToggleConfirmDeleteTable: (value: boolean) => void;
+  theme: Theme;
+  onThemeChange: (theme: Theme) => void;
+  notes: Note[];
+  folders: Folder[];
+}
   confirmDelete: boolean;
   onToggleConfirmDelete: (value: boolean) => void;
   confirmDeleteAiChat: boolean;
