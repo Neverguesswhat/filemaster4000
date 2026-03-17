@@ -98,6 +98,9 @@ function moveRowDown(editor: Editor) {
 export function TableToolbar({ editor, confirmDeleteTable }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const isInTable = editor.isActive('table');
+  const hasTable = editor.state.doc.content.content.some(
+    (node: any) => node.type.name === 'table' || node.content?.content?.some((child: any) => child.type.name === 'table')
+  );
 
   const handleDeleteTable = () => {
     if (confirmDeleteTable) {
@@ -107,7 +110,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
     }
   };
 
-  if (!isInTable) return null;
+  if (!hasTable) return null;
 
   return (
     <>
