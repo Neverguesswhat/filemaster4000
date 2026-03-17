@@ -130,6 +130,8 @@ const Index = () => {
         onToggleConfirmDeleteTable={(v) => updateSetting('confirmDeleteTable', v)}
         theme={theme}
         onThemeChange={setTheme}
+        notes={notes}
+        folders={folders}
       />
     </div>
   );

@@ -1,7 +1,12 @@
-import { Settings } from 'lucide-react';
+import { useState } from 'react';
+import { Settings, Download, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { exportAllAsZip } from '@/lib/exportAll';
+import type { Note, Folder } from '@/types/notes';
+import { toast } from 'sonner';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -16,9 +21,26 @@ interface Props {
   onToggleConfirmDeleteTable: (value: boolean) => void;
   theme: Theme;
   onThemeChange: (theme: Theme) => void;
+  notes: Note[];
+  folders: Folder[];
 }
 
-export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat, confirmDeleteTable, onToggleConfirmDeleteTable, theme, onThemeChange }: Props) {
+export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat, confirmDeleteTable, onToggleConfirmDeleteTable, theme, onThemeChange, notes, folders }: Props) {
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportAll = async () => {
+    setExporting(true);
+    try {
+      await exportAllAsZip(notes, folders);
+      toast.success('Export complete');
+    } catch (e) {
+      console.error(e);
+      toast.error('Export failed');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="sm:max-w-sm">
@@ -76,6 +98,21 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
                 <Switch id="confirm-delete-table" checked={confirmDeleteTable} onCheckedChange={onToggleConfirmDeleteTable} />
               </div>
             </div>
+          </div>
+
+          {/* Export */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Data</h3>
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={handleExportAll}
+              disabled={exporting || notes.length === 0}
+            >
+              {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {exporting ? 'Exporting…' : 'Export all notes as ZIP'}
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">Downloads all notes as printable HTML files organized in their folder structure.</p>
           </div>
 
           {/* Keyboard shortcuts */}
