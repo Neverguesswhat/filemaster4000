@@ -111,7 +111,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
 
   return (
     <>
-      <div className="flex items-center gap-0.5 px-2 py-1 border-b border-border bg-background/50 flex-wrap">
+      <div className="flex items-center justify-center gap-0.5 px-2 py-1 border-b border-border bg-background/50 flex-wrap">
         <span className="text-xs font-medium text-muted-foreground mr-1.5">Table</span>
         <div className="w-px h-4 bg-border mx-0.5" />
         <MenuButton
