@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState } from 'react';
 import type { Editor } from '@tiptap/react';
 import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
@@ -95,59 +95,9 @@ function moveRowDown(editor: Editor) {
   dispatch(tr);
 }
 
-export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
+export function TableToolbar({ editor, confirmDeleteTable }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [menuPos, setMenuPos] = useState<{ x: number; y: number } | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleContextMenu = useCallback((e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    const cell = target.closest('td, th');
-    if (!cell) return;
-    const editorDom = editor.view.dom;
-    if (!editorDom.contains(cell)) return;
-
-    // Show toolbar but don't prevent default — native context menu still appears
-    setMenuPos({ x: e.clientX, y: e.clientY });
-
-    // Auto-hide after a delay so it doesn't linger forever
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-    hideTimerRef.current = setTimeout(() => setMenuPos(null), 8000);
-  }, [editor]);
-
-  const closeMenu = useCallback(() => {
-    setMenuPos(null);
-    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
-  }, []);
-
-  useEffect(() => {
-    const editorDom = editor.view.dom;
-    editorDom.addEventListener('contextmenu', handleContextMenu);
-    return () => editorDom.removeEventListener('contextmenu', handleContextMenu);
-  }, [editor, handleContextMenu]);
-
-  // Close on click outside or scroll
-  useEffect(() => {
-    if (!menuPos) return;
-    const handleClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        closeMenu();
-      }
-    };
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeMenu();
-    };
-    const handleScroll = () => closeMenu();
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('keydown', handleKey);
-    window.addEventListener('scroll', handleScroll, true);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('keydown', handleKey);
-      window.removeEventListener('scroll', handleScroll, true);
-    };
-  }, [menuPos, closeMenu]);
+  const isInTable = editor.isActive('table');
 
   const handleDeleteTable = () => {
     if (confirmDeleteTable) {
@@ -155,65 +105,57 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
     } else {
       editor.chain().focus().deleteTable().run();
     }
-    closeMenu();
   };
 
-  const runAndClose = (fn: () => void) => {
-    fn();
-    closeMenu();
-  };
+  if (!isInTable) return null;
 
   return (
     <>
-      {menuPos && (
-        <div
-          ref={menuRef}
-          className="fixed z-50 flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1 animate-in fade-in-0 zoom-in-95"
-          style={{ left: menuPos.x, top: menuPos.y - 48 }}
-        >
-          <MenuButton
-            onClick={() => runAndClose(() => moveRowUp(editor))}
-            icon={<ArrowUp className="w-4 h-4" />}
-            label="Move row up"
-          />
-          <MenuButton
-            onClick={() => runAndClose(() => moveRowDown(editor))}
-            icon={<ArrowDown className="w-4 h-4" />}
-            label="Move row down"
-          />
-          <div className="w-px h-5 bg-border mx-0.5" />
-          <MenuButton
-            onClick={() => runAndClose(() => editor.chain().focus().addRowAfter().run())}
-            icon={<><Plus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
-            label="Add row"
-          />
-          <MenuButton
-            onClick={() => runAndClose(() => editor.chain().focus().deleteRow().run())}
-            icon={<><Minus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
-            label="Delete row"
-            destructive
-          />
-          <div className="w-px h-5 bg-border mx-0.5" />
-          <MenuButton
-            onClick={() => runAndClose(() => editor.chain().focus().addColumnAfter().run())}
-            icon={<><Plus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
-            label="Add column"
-          />
-          <MenuButton
-            onClick={() => runAndClose(() => editor.chain().focus().deleteColumn().run())}
-            icon={<><Minus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
-            label="Delete column"
-            destructive
-          />
-          <div className="w-px h-5 bg-border mx-0.5" />
-          <MenuButton
-            onClick={handleDeleteTable}
-            icon={<Trash2 className="w-4 h-4" />}
-            label="Delete table"
-            destructive
-          />
-        </div>
-      )}
+      <div className="flex items-center gap-0.5 px-2 py-1 border-b border-border bg-background/50 flex-wrap">
+        <span className="text-xs font-medium text-muted-foreground mr-1.5">Table</span>
+        <div className="w-px h-4 bg-border mx-0.5" />
+        <MenuButton
+          onClick={() => moveRowUp(editor)}
+          icon={<ArrowUp className="w-4 h-4" />}
+          label="Move row up"
+        />
+        <MenuButton
+          onClick={() => moveRowDown(editor)}
+          icon={<ArrowDown className="w-4 h-4" />}
+          label="Move row down"
+        />
+        <div className="w-px h-4 bg-border mx-0.5" />
+        <MenuButton
+          onClick={() => editor.chain().focus().addRowAfter().run()}
+          icon={<><Plus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
+          label="Add row"
+        />
+        <MenuButton
+          onClick={() => editor.chain().focus().deleteRow().run()}
+          icon={<><Minus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
+          label="Delete row"
+          destructive
+        />
+        <div className="w-px h-4 bg-border mx-0.5" />
+        <MenuButton
+          onClick={() => editor.chain().focus().addColumnAfter().run()}
+          icon={<><Plus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
+          label="Add column"
+        />
+        <MenuButton
+          onClick={() => editor.chain().focus().deleteColumn().run()}
+          icon={<><Minus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
+          label="Delete column"
+          destructive
+        />
+        <div className="w-px h-4 bg-border mx-0.5" />
+        <MenuButton
+          onClick={handleDeleteTable}
+          icon={<Trash2 className="w-4 h-4" />}
+          label="Delete table"
+          destructive
+        />
+      </div>
 
       <ConfirmDeleteDialog
         open={showDeleteConfirm}
