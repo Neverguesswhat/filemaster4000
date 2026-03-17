@@ -13,17 +13,21 @@ interface MenuButtonProps {
   icon: React.ReactNode;
   label: string;
   destructive?: boolean;
+  disabled?: boolean;
 }
 
-function MenuButton({ onClick, icon, label, destructive }: MenuButtonProps) {
+function MenuButton({ onClick, icon, label, destructive, disabled }: MenuButtonProps) {
   return (
     <button
       onClick={onClick}
       title={label}
+      disabled={disabled}
       className={`p-1.5 rounded-md transition-colors flex items-center gap-0.5 ${
-        destructive
-          ? 'text-destructive hover:bg-destructive/10'
-          : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+        disabled
+          ? 'text-muted-foreground/40 cursor-not-allowed'
+          : destructive
+            ? 'text-destructive hover:bg-destructive/10'
+            : 'text-muted-foreground hover:text-foreground hover:bg-accent'
       }`}
     >
       {icon}
