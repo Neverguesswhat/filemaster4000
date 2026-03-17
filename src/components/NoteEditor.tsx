@@ -297,7 +297,6 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, o
           />
           <div className="tiptap-editor">
             <EditorContent editor={editor} />
-            <TableBubbleMenu editor={editor} confirmDeleteTable={confirmDeleteTable} />
           </div>
         </div>
       </div>
