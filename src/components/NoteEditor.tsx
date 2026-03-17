@@ -258,6 +258,8 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, o
         />
       </div>
 
+      {editor && <TableToolbar editor={editor} confirmDeleteTable={confirmDeleteTable} />}
+
       <AISummaryPanel
         key={note.id}
         open={aiPanelOpen}
