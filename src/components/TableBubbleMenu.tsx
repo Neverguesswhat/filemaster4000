@@ -99,21 +99,26 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [menuPos, setMenuPos] = useState<{ x: number; y: number } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleContextMenu = useCallback((e: MouseEvent) => {
     const target = e.target as HTMLElement;
     const cell = target.closest('td, th');
     if (!cell) return;
-    // Ensure the cell is inside the editor's table
     const editorDom = editor.view.dom;
     if (!editorDom.contains(cell)) return;
 
-    e.preventDefault();
+    // Show toolbar but don't prevent default — native context menu still appears
     setMenuPos({ x: e.clientX, y: e.clientY });
+
+    // Auto-hide after a delay so it doesn't linger forever
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = setTimeout(() => setMenuPos(null), 8000);
   }, [editor]);
 
   const closeMenu = useCallback(() => {
     setMenuPos(null);
+    if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
   }, []);
 
   useEffect(() => {
@@ -122,7 +127,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
     return () => editorDom.removeEventListener('contextmenu', handleContextMenu);
   }, [editor, handleContextMenu]);
 
-  // Close on click outside
+  // Close on click outside or scroll
   useEffect(() => {
     if (!menuPos) return;
     const handleClick = (e: MouseEvent) => {
@@ -133,11 +138,14 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeMenu();
     };
+    const handleScroll = () => closeMenu();
     document.addEventListener('mousedown', handleClick);
     document.addEventListener('keydown', handleKey);
+    window.addEventListener('scroll', handleScroll, true);
     return () => {
       document.removeEventListener('mousedown', handleClick);
       document.removeEventListener('keydown', handleKey);
+      window.removeEventListener('scroll', handleScroll, true);
     };
   }, [menuPos, closeMenu]);
 
@@ -160,7 +168,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
       {menuPos && (
         <div
           ref={menuRef}
-          className="fixed z-50 flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1"
+          className="fixed z-50 flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1 animate-in fade-in-0 zoom-in-95"
           style={{ left: menuPos.x, top: menuPos.y - 48 }}
         >
           <MenuButton
