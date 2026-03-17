@@ -24,17 +24,23 @@ interface Props {
   notes: Note[];
   folders: Folder[];
 }
-  confirmDelete: boolean;
-  onToggleConfirmDelete: (value: boolean) => void;
-  confirmDeleteAiChat: boolean;
-  onToggleConfirmDeleteAiChat: (value: boolean) => void;
-  confirmDeleteTable: boolean;
-  onToggleConfirmDeleteTable: (value: boolean) => void;
-  theme: Theme;
-  onThemeChange: (theme: Theme) => void;
-}
 
-export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat, confirmDeleteTable, onToggleConfirmDeleteTable, theme, onThemeChange }: Props) {
+export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDelete, confirmDeleteAiChat, onToggleConfirmDeleteAiChat, confirmDeleteTable, onToggleConfirmDeleteTable, theme, onThemeChange, notes, folders }: Props) {
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportAll = async () => {
+    setExporting(true);
+    try {
+      await exportAllAsZip(notes, folders);
+      toast.success('Export complete');
+    } catch (e) {
+      console.error(e);
+      toast.error('Export failed');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
       <SheetContent className="sm:max-w-sm">
