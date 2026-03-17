@@ -112,8 +112,7 @@ export function TableBubbleMenu({ editor, confirmDeleteTable }: Props) {
       <BubbleMenu
         editor={editor}
         shouldShow={({ editor }) => editor.isActive('table')}
-        className="flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1"
-        offset={16}
+        className="flex items-center gap-0.5 bg-popover border border-border rounded-lg shadow-lg p-1 -translate-y-4"
       >
         {/* Row movement: ↑ ↓ */}
         <MenuButton

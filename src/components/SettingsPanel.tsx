@@ -100,6 +100,21 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
             </div>
           </div>
 
+          {/* Export */}
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Data</h3>
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={handleExportAll}
+              disabled={exporting || notes.length === 0}
+            >
+              {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {exporting ? 'Exporting…' : 'Export all notes as ZIP'}
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">Downloads all notes as printable HTML files organized in their folder structure.</p>
+          </div>
+
           {/* Keyboard shortcuts */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Keyboard shortcuts</h3>
