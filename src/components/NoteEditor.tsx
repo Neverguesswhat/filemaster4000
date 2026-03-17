@@ -11,7 +11,7 @@ import { Bold, Italic, Strikethrough, Code, List, ListOrdered, Quote, Heading1, 
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AISummaryPanel } from './AISummaryPanel';
-import { TableBubbleMenu } from './TableBubbleMenu';
+import { TableToolbar } from './TableBubbleMenu';
 import { exportAsMarkdown, exportAsPdf } from '@/lib/exportNote';
 import type { Note } from '@/types/notes';
 
