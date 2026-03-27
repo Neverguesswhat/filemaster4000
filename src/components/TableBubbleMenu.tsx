@@ -101,7 +101,7 @@ function moveRowDown(editor: Editor) {
 
 export function TableToolbar({ editor, confirmDeleteTable }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const isInTable = editor.isActive('table');
+  const isCellSelected = editor.isActive('tableCell') || editor.isActive('tableHeader');
   const hasTable = editor.state.doc.content.content.some(
     (node: any) => node.type.name === 'table' || node.content?.content?.some((child: any) => child.type.name === 'table')
   );
@@ -114,7 +114,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
     }
   };
 
-  if (!hasTable || !isInTable) return null;
+  if (!hasTable || !isCellSelected) return null;
 
   return (
     <>
@@ -123,41 +123,41 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
           onClick={() => moveRowUp(editor)}
           icon={<ArrowUp className="w-4 h-4" />}
           label="Move row up"
-          disabled={!isInTable}
+          disabled={!isCellSelected}
         />
         <MenuButton
           onClick={() => moveRowDown(editor)}
           icon={<ArrowDown className="w-4 h-4" />}
           label="Move row down"
-          disabled={!isInTable}
+          disabled={!isCellSelected}
         />
         <div className="w-px h-4 bg-border mx-0.5" />
         <MenuButton
           onClick={() => editor.chain().focus().addRowAfter().run()}
           icon={<><Plus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
           label="Add row"
-          disabled={!isInTable}
+          disabled={!isCellSelected}
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteRow().run()}
           icon={<><Minus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
           label="Delete row"
           destructive
-          disabled={!isInTable}
+          disabled={!isCellSelected}
         />
         <div className="w-px h-4 bg-border mx-0.5" />
         <MenuButton
           onClick={() => editor.chain().focus().addColumnAfter().run()}
           icon={<><Plus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
           label="Add column"
-          disabled={!isInTable}
+          disabled={!isCellSelected}
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteColumn().run()}
           icon={<><Minus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
           label="Delete column"
           destructive
-          disabled={!isInTable}
+          disabled={!isCellSelected}
         />
         <div className="w-px h-4 bg-border mx-0.5" />
         <MenuButton
@@ -165,7 +165,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
           icon={<Trash2 className="w-4 h-4" />}
           label="Delete table"
           destructive
-          disabled={!isInTable}
+          disabled={!isCellSelected}
         />
       </div>
 
