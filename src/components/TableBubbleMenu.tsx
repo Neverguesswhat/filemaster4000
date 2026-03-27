@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import type { Editor } from '@tiptap/react';
 import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
