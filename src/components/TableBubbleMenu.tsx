@@ -132,7 +132,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
 
   return (
     <>
-      <div className="flex items-center gap-0.5 pl-6 pr-2 py-1 border-b border-border bg-background/50 flex-wrap">
+      <div className={`flex items-center gap-0.5 pl-6 pr-2 py-1 border-b border-border bg-background/50 flex-wrap transition-opacity ${!isCellSelected ? 'opacity-50 pointer-events-none' : ''}`}>
         <MenuButton
           onClick={() => moveRowUp(editor)}
           icon={<ArrowUp className="w-4 h-4" />}
