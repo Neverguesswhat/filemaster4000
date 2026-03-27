@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import type { Editor } from '@tiptap/react';
 import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
@@ -101,6 +101,17 @@ function moveRowDown(editor: Editor) {
 
 export function TableToolbar({ editor, confirmDeleteTable }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+
+  useEffect(() => {
+    editor.on('selectionUpdate', forceUpdate);
+    editor.on('update', forceUpdate);
+    return () => {
+      editor.off('selectionUpdate', forceUpdate);
+      editor.off('update', forceUpdate);
+    };
+  }, [editor]);
+
   const { $from } = editor.state.selection;
 
   const isCellSelected = (() => {
