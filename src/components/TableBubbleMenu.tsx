@@ -101,10 +101,24 @@ function moveRowDown(editor: Editor) {
 
 export function TableToolbar({ editor, confirmDeleteTable }: Props) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const isCellSelected = editor.isActive('tableCell') || editor.isActive('tableHeader');
-  const hasTable = editor.state.doc.content.content.some(
-    (node: any) => node.type.name === 'table' || node.content?.content?.some((child: any) => child.type.name === 'table')
-  );
+  const { $from } = editor.state.selection;
+
+  const isCellSelected = (() => {
+    for (let depth = $from.depth; depth > 0; depth--) {
+      const nodeName = $from.node(depth).type.name;
+      if (nodeName === 'tableCell' || nodeName === 'tableHeader') return true;
+    }
+    return false;
+  })();
+
+  let hasTable = false;
+  editor.state.doc.descendants((node) => {
+    if (node.type.name === 'table') {
+      hasTable = true;
+      return false;
+    }
+    return true;
+  });
 
   const handleDeleteTable = () => {
     if (confirmDeleteTable) {
@@ -114,7 +128,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
     }
   };
 
-  if (!hasTable || !isCellSelected) return null;
+  if (!hasTable) return null;
 
   return (
     <>
