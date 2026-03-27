@@ -114,7 +114,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
     }
   };
 
-  if (!hasTable) return null;
+  if (!hasTable || !isInTable) return null;
 
   return (
     <>
