@@ -325,6 +325,21 @@ export function FolderSidebar({
             New note
           </button>
           <button
+            onClick={() => importInputRef.current?.click()}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            Import file
+          </button>
+          <input
+            ref={importInputRef}
+            type="file"
+            accept=".md,.markdown,.csv,.html,.htm,.pdf"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+          </button>
+          <button
             onClick={isRecording ? onStopRecording : onStartRecording}
             className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
               isRecording

@@ -96,6 +96,7 @@ const Index = () => {
         onStopRecording={handleStopRecording}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onImportNote={(title, content) => createNoteWithContent(title, content)}
       />
 
       {activeNote ? (
