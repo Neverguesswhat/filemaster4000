@@ -51,6 +51,20 @@ export function FolderSidebar({
   const [deletingFolder, setDeletingFolder] = useState<FolderType | null>(null);
   const [confirmDeleteNote, setConfirmDeleteNote] = useState<Note | null>(null);
   const [confirmDeleteEmptyFolder, setConfirmDeleteEmptyFolder] = useState<FolderType | null>(null);
+  const importInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const { title, content } = await importFile(file);
+      onImportNote(title, content);
+      toast.success(`Imported "${title}"`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to import file');
+    }
+    e.target.value = '';
+  }, [onImportNote]);
 
   const isSearching = searchQuery.trim().length > 0;
 
