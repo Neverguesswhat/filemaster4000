@@ -40,7 +40,7 @@ export function FolderSidebar({
   getDescendantFolderIds, activeNoteId,
   onCreateFolder, onDeleteFolderAll, onDeleteFolderKeep, onMoveFolderToParent,
   onSelectNote, onCreateNote, onDeleteNote, onMoveNote, onTogglePin,
-  confirmDelete, onOpenSettings,
+  confirmDelete, onOpenSettings, onImportNote,
   isRecording, recordingTranscript, onStartRecording, onStopRecording,
   searchQuery, onSearchChange,
 }: Props) {
