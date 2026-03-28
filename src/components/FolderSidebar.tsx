@@ -1,5 +1,7 @@
-import { useState, useCallback, forwardRef, useMemo } from 'react';
-import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings, Mic, Square, Search, Pin, X } from 'lucide-react';
+import { useState, useCallback, forwardRef, useMemo, useRef } from 'react';
+import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings, Mic, Square, Search, Pin, X, Upload } from 'lucide-react';
+import { importFile } from '@/lib/importNote';
+import { toast } from 'sonner';
 import type { Folder as FolderType, Note } from '@/types/notes';
 import { DeleteFolderDialog } from './DeleteFolderDialog';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
@@ -24,6 +26,7 @@ interface Props {
   onTogglePin: (id: string) => void;
   confirmDelete: boolean;
   onOpenSettings: () => void;
+  onImportNote: (title: string, content: string) => void;
   isRecording: boolean;
   recordingTranscript: string;
   onStartRecording: () => void;
@@ -37,7 +40,7 @@ export function FolderSidebar({
   getDescendantFolderIds, activeNoteId,
   onCreateFolder, onDeleteFolderAll, onDeleteFolderKeep, onMoveFolderToParent,
   onSelectNote, onCreateNote, onDeleteNote, onMoveNote, onTogglePin,
-  confirmDelete, onOpenSettings,
+  confirmDelete, onOpenSettings, onImportNote,
   isRecording, recordingTranscript, onStartRecording, onStopRecording,
   searchQuery, onSearchChange,
 }: Props) {
@@ -48,6 +51,20 @@ export function FolderSidebar({
   const [deletingFolder, setDeletingFolder] = useState<FolderType | null>(null);
   const [confirmDeleteNote, setConfirmDeleteNote] = useState<Note | null>(null);
   const [confirmDeleteEmptyFolder, setConfirmDeleteEmptyFolder] = useState<FolderType | null>(null);
+  const importInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const { title, content } = await importFile(file);
+      onImportNote(title, content);
+      toast.success(`Imported "${title}"`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to import file');
+    }
+    e.target.value = '';
+  }, [onImportNote]);
 
   const isSearching = searchQuery.trim().length > 0;
 
@@ -307,6 +324,20 @@ export function FolderSidebar({
             <Plus className="w-4 h-4" />
             New note
           </button>
+          <button
+            onClick={() => importInputRef.current?.click()}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            Import file
+          </button>
+          <input
+            ref={importInputRef}
+            type="file"
+            accept=".md,.markdown,.csv,.html,.htm,.pdf"
+            onChange={handleImportFile}
+            className="hidden"
+          />
           <button
             onClick={isRecording ? onStopRecording : onStartRecording}
             className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
