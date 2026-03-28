@@ -216,3 +216,19 @@
 .tiptap-editor .ProseMirror table .selectedCell {
   @apply bg-primary/10;
 }
+
+/* Table column resize handle */
+.tiptap-editor .ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background-color: hsl(var(--primary));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tiptap-editor .ProseMirror.resize-cursor {
+  cursor: col-resize;
+}
