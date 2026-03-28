@@ -1,5 +1,7 @@
-import { useState, useCallback, forwardRef, useMemo } from 'react';
-import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings, Mic, Square, Search, Pin, X } from 'lucide-react';
+import { useState, useCallback, forwardRef, useMemo, useRef } from 'react';
+import { Folder, FolderOpen, Plus, FileText, Trash2, ChevronRight, ChevronDown, Settings, Mic, Square, Search, Pin, X, Upload } from 'lucide-react';
+import { importFile } from '@/lib/importNote';
+import { toast } from 'sonner';
 import type { Folder as FolderType, Note } from '@/types/notes';
 import { DeleteFolderDialog } from './DeleteFolderDialog';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
