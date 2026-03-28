@@ -26,6 +26,7 @@ interface Props {
   onTogglePin: (id: string) => void;
   confirmDelete: boolean;
   onOpenSettings: () => void;
+  onImportNote: (title: string, content: string) => void;
   isRecording: boolean;
   recordingTranscript: string;
   onStartRecording: () => void;
