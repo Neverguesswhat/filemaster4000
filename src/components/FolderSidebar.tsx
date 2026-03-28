@@ -338,7 +338,6 @@ export function FolderSidebar({
             onChange={handleImportFile}
             className="hidden"
           />
-          </button>
           <button
             onClick={isRecording ? onStopRecording : onStartRecording}
             className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${
