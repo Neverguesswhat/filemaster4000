@@ -559,7 +559,7 @@ const NoteItem = forwardRef<HTMLDivElement, {
         e.dataTransfer.setData('noteId', note.id);
       }}
       onClick={() => onSelect(note.id)}
-      className={`group flex items-center gap-2 py-1.5 pr-3 mx-1 rounded-md cursor-pointer transition-colors ${
+      className={`group flex items-center gap-2 py-1.5 pr-9 mx-1 rounded-md cursor-pointer transition-colors ${
         isActive ? 'bg-primary/10 text-primary' : 'hover:bg-accent text-foreground'
       }`}
       style={{ paddingLeft }}
