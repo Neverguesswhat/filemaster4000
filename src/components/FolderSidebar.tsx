@@ -549,7 +549,7 @@ const NoteItem = forwardRef<HTMLDivElement, {
   depth: number;
   alignWithFolders?: boolean;
 }>(({ note, isActive, onSelect, onDelete, onTogglePin, depth, alignWithFolders }, ref) => {
-  const paddingLeft = (alignWithFolders && depth === 0 ? 12 : 28 + depth * 16) + 40;
+  const paddingLeft = (alignWithFolders && depth === 0 ? 12 : 28 + depth * 16) + 24;
   return (
     <div
       ref={ref}
