@@ -7,7 +7,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsPanel } from '@/components/SettingsPanel';
-import { FolderOpen } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Index = () => {
@@ -113,7 +113,7 @@ const Index = () => {
       ) : (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <FolderOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+            <FileText className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
             <p className="text-lg text-muted-foreground">Select or create a note</p>
             <p className="text-sm text-muted-foreground/70 mt-1">Use the sidebar to get started</p>
           </div>
