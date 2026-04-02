@@ -559,14 +559,14 @@ const NoteItem = forwardRef<HTMLDivElement, {
         e.dataTransfer.setData('noteId', note.id);
       }}
       onClick={() => onSelect(note.id)}
-      className={`group flex items-center gap-2 py-1.5 pr-9 mx-1 rounded-md cursor-pointer transition-colors ${
+      className={`group relative flex items-center gap-2 py-1.5 pr-4 mx-1 rounded-md cursor-pointer transition-colors ${
         isActive ? 'bg-primary/10 text-primary' : 'hover:bg-accent text-foreground'
       }`}
       style={{ paddingLeft }}
     >
       <FileText className="w-3.5 h-3.5 shrink-0 opacity-60" />
       <span className="text-sm truncate flex-1">{note.title || 'Untitled'}</span>
-      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute right-2 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={e => { e.stopPropagation(); onTogglePin(note.id); }}
           className={`p-0.5 ${note.pinned ? 'text-primary' : 'hover:text-primary'}`}
