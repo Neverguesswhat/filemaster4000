@@ -282,7 +282,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, o
 
       {/* Editor area */}
       <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto px-6 py-8">
+        <div className="mx-auto px-10 py-8">
           {isRecording && (
             <div className="flex items-center gap-2 px-3 py-2 mb-4 rounded-md bg-destructive/10 border border-destructive/20">
               <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
