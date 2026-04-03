@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FileText, Trash2, FolderCheck } from 'lucide-react';
+import { DocumentTextIcon, TrashIcon, FolderIcon } from '@heroicons/react/24/outline';
 import type { Note } from '@/types/notes';
 
 type Step = 'choose' | 'select-files';

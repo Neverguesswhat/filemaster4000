@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Sparkles, X, Loader2, Send, Trash2 } from 'lucide-react';
+import { SparklesIcon, XMarkIcon, ArrowPathIcon, PaperAirplaneIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';

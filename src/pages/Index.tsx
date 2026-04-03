@@ -7,7 +7,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsPanel } from '@/components/SettingsPanel';
-import { FileText } from 'lucide-react';
+import { DocumentTextIcon } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 
 const Index = () => {

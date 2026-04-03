@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from 'react';
 import type { Editor } from '@tiptap/react';
-import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
+import { ArrowUpIcon, ArrowDownIcon, PlusIcon, MinusIcon, TrashIcon, Bars3Icon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 
 interface Props {
