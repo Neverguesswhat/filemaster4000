@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer } from 'react';
 import type { Editor } from '@tiptap/react';
-import { ArrowUp, ArrowDown, Plus, Minus, Trash2, Rows3, Columns3 } from 'lucide-react';
+import { ArrowUpIcon, ArrowDownIcon, PlusIcon, MinusIcon, TrashIcon, Bars3Icon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 import { ConfirmDeleteDialog } from './ConfirmDeleteDialog';
 
 interface Props {
@@ -146,26 +146,26 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
       <div className={`flex items-center gap-0.5 pl-6 pr-2 py-1 border-b border-border bg-background/50 flex-wrap transition-opacity ${!isCellSelected ? 'opacity-50 pointer-events-none' : ''}`}>
         <MenuButton
           onClick={() => moveRowUp(editor)}
-          icon={<ArrowUp className="w-4 h-4" />}
+          icon={<ArrowUpIcon className="w-4 h-4" />}
           label="Move row up"
           disabled={!isCellSelected}
         />
         <MenuButton
           onClick={() => moveRowDown(editor)}
-          icon={<ArrowDown className="w-4 h-4" />}
+          icon={<ArrowDownIcon className="w-4 h-4" />}
           label="Move row down"
           disabled={!isCellSelected}
         />
         <div className="w-px h-4 bg-border mx-0.5" />
         <MenuButton
           onClick={() => editor.chain().focus().addRowAfter().run()}
-          icon={<><Plus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
+          icon={<><PlusIcon className="w-3 h-3" /><Bars3Icon className="w-4 h-4" /></>}
           label="Add row"
           disabled={!isCellSelected}
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteRow().run()}
-          icon={<><Minus className="w-3 h-3" /><Rows3 className="w-4 h-4" /></>}
+          icon={<><MinusIcon className="w-3 h-3" /><Bars3Icon className="w-4 h-4" /></>}
           label="Delete row"
           destructive
           disabled={!isCellSelected}
@@ -173,13 +173,13 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
         <div className="w-px h-4 bg-border mx-0.5" />
         <MenuButton
           onClick={() => editor.chain().focus().addColumnAfter().run()}
-          icon={<><Plus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
+          icon={<><PlusIcon className="w-3 h-3" /><ViewColumnsIcon className="w-4 h-4" /></>}
           label="Add column"
           disabled={!isCellSelected}
         />
         <MenuButton
           onClick={() => editor.chain().focus().deleteColumn().run()}
-          icon={<><Minus className="w-3 h-3" /><Columns3 className="w-4 h-4" /></>}
+          icon={<><MinusIcon className="w-3 h-3" /><ViewColumnsIcon className="w-4 h-4" /></>}
           label="Delete column"
           destructive
           disabled={!isCellSelected}
@@ -187,7 +187,7 @@ export function TableToolbar({ editor, confirmDeleteTable }: Props) {
         <div className="w-px h-4 bg-border mx-0.5" />
         <MenuButton
           onClick={handleDeleteTable}
-          icon={<Trash2 className="w-4 h-4" />}
+          icon={<TrashIcon className="w-4 h-4" />}
           label="Delete table"
           destructive
           disabled={!isCellSelected}

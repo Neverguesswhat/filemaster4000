@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Settings, Download, Loader2 } from 'lucide-react';
+import { Cog6ToothIcon, ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -46,7 +46,7 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
       <SheetContent className="sm:max-w-sm">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 text-sm">
-            <Settings className="w-4 h-4" />
+            <Cog6ToothIcon className="w-4 h-4" />
             Settings
           </SheetTitle>
         </SheetHeader>
@@ -109,7 +109,7 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
               onClick={handleExportAll}
               disabled={exporting || notes.length === 0}
             >
-              {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {exporting ? <ArrowPathIcon className="w-4 h-4 animate-spin" /> : <ArrowDownTrayIcon className="w-4 h-4" />}
               {exporting ? 'Exporting…' : 'Export all notes as ZIP'}
             </Button>
             <p className="text-xs text-muted-foreground mt-2">Downloads all notes as printable HTML files organized in their folder structure.</p>
