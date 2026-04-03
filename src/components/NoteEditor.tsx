@@ -151,77 +151,77 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, o
         <ToolbarButton
           active={editor.isActive('heading', { level: 1 })}
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          icon={<Heading1 className="w-4 h-4" />}
+          icon={<H1Icon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={editor.isActive('heading', { level: 2 })}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          icon={<Heading2 className="w-4 h-4" />}
+          icon={<H2Icon className="w-4 h-4" />}
         />
         <div className="w-px h-5 bg-border mx-1" />
         <ToolbarButton
           active={editor.isActive('bold')}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          icon={<Bold className="w-4 h-4" />}
+          icon={<BoldIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={editor.isActive('italic')}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          icon={<Italic className="w-4 h-4" />}
+          icon={<ItalicIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={editor.isActive('strike')}
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          icon={<Strikethrough className="w-4 h-4" />}
+          icon={<StrikethroughIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={editor.isActive('code')}
           onClick={() => editor.chain().focus().toggleCode().run()}
-          icon={<Code className="w-4 h-4" />}
+          icon={<CodeBracketIcon className="w-4 h-4" />}
         />
         <div className="w-px h-5 bg-border mx-1" />
         <ToolbarButton
           active={editor.isActive('bulletList')}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          icon={<List className="w-4 h-4" />}
+          icon={<ListBulletIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={editor.isActive('orderedList')}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          icon={<ListOrdered className="w-4 h-4" />}
+          icon={<QueueListIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={editor.isActive('blockquote')}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          icon={<Quote className="w-4 h-4" />}
+          icon={<ChatBubbleBottomCenterTextIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={false}
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          icon={<Minus className="w-4 h-4" />}
+          icon={<MinusIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={false}
           onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
-          icon={<TableIcon className="w-4 h-4" />}
+          icon={<TableCellsIcon className="w-4 h-4" />}
         />
         <div className="w-px h-5 bg-border mx-1" />
         <ToolbarButton
           active={false}
           onClick={handleImageUpload}
-          icon={<ImagePlus className="w-4 h-4" />}
+          icon={<PhotoIcon className="w-4 h-4" />}
         />
         <ToolbarButton
           active={note.pinned}
           onClick={() => onTogglePin(note.id)}
-          icon={<Pin className="w-4 h-4" />}
+          icon={<MapPinIcon className="w-4 h-4" />}
         />
         {/* Export dropdown */}
         <div className="relative">
           <ToolbarButton
             active={false}
             onClick={() => setShowExportMenu(!showExportMenu)}
-            icon={<Download className="w-4 h-4" />}
+            icon={<ArrowDownTrayIcon className="w-4 h-4" />}
           />
           {showExportMenu && (
             <div className="absolute top-full left-0 mt-1 bg-popover border border-border rounded-md shadow-lg py-1 z-20 min-w-[140px]">
@@ -246,7 +246,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, o
           disabled={isSummarizing}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
         >
-          {isSummarizing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+          {isSummarizing ? <ArrowPathIcon className="w-3.5 h-3.5 animate-spin" /> : <SparklesIcon className="w-3.5 h-3.5" />}
           {scopedSummary ? 'AI Summary' : 'Summarize'}
         </button>
         <input

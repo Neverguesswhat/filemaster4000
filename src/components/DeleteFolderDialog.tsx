@@ -62,7 +62,7 @@ export function DeleteFolderDialog({ open, folderName, notes, onClose, onDeleteA
                 className="justify-start gap-2"
                 onClick={handleDeleteAll}
               >
-                <Trash2 className="w-4 h-4" />
+                <TrashIcon className="w-4 h-4" />
                 Delete all files
               </Button>
               <Button
@@ -70,7 +70,7 @@ export function DeleteFolderDialog({ open, folderName, notes, onClose, onDeleteA
                 className="justify-start gap-2"
                 onClick={() => setStep('select-files')}
               >
-                <FolderCheck className="w-4 h-4" />
+                <FolderIcon className="w-4 h-4" />
                 Select files to keep
               </Button>
             </div>
@@ -94,7 +94,7 @@ export function DeleteFolderDialog({ open, folderName, notes, onClose, onDeleteA
                       checked={selectedNotes.has(note.id)}
                       onCheckedChange={() => toggleNote(note.id)}
                     />
-                    <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <DocumentTextIcon className="w-4 h-4 text-muted-foreground shrink-0" />
                     <span className="text-sm text-foreground truncate">{note.title || 'Untitled'}</span>
                   </label>
                 ))}

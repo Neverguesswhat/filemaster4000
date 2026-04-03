@@ -195,7 +195,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
       <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md [&>button]:hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <span className="flex items-center gap-2 text-sm font-semibold">
-            <Sparkles className="w-4 h-4 text-primary" />
+            <SparklesIcon className="w-4 h-4 text-primary" />
             AI Summary
           </span>
           <div className="flex items-center gap-1">
@@ -205,14 +205,14 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
                 className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                 title="Delete conversation"
               >
-                <Trash2 className="w-4 h-4" />
+                <TrashIcon className="w-4 h-4" />
               </button>
             )}
             <button
               onClick={onClose}
               className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
             >
-              <X className="h-4 w-4" />
+              <XMarkIcon className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -221,7 +221,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
           <div className="px-5 py-4 space-y-4">
             {isSummarizing ? (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <ArrowPathIcon className="w-4 h-4 animate-spin" />
                 <span>Generating summary…</span>
               </div>
             ) : summary ? (
@@ -245,7 +245,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
 
                 {isAsking && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <ArrowPathIcon className="w-3.5 h-3.5 animate-spin" />
                     <span>Thinking…</span>
                   </div>
                 )}
@@ -272,7 +272,7 @@ export function AISummaryPanel({ open, summary, isSummarizing, noteContent, note
                 disabled={isAsking || !followUp.trim()}
                 className="p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
-                <Send className="w-4 h-4" />
+                <PaperAirplaneIcon className="w-4 h-4" />
               </button>
             </div>
           </div>
