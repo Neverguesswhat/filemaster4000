@@ -51,6 +51,9 @@ export function FolderSidebar({
   const [deletingFolder, setDeletingFolder] = useState<FolderType | null>(null);
   const [confirmDeleteNote, setConfirmDeleteNote] = useState<Note | null>(null);
   const [confirmDeleteEmptyFolder, setConfirmDeleteEmptyFolder] = useState<FolderType | null>(null);
+  const [showPredictions, setShowPredictions] = useState(false);
+  const [selectedPrediction, setSelectedPrediction] = useState(-1);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
 
   const handleImportFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
