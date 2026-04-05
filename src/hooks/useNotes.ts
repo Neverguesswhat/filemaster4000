@@ -20,7 +20,7 @@ export function useNotes() {
     const load = async () => {
       try {
         const [foldersRes, notesRes] = await Promise.all([
-          supabase.from('folders').select('*').order('created_at', { ascending: true }),
+          supabase.from('folders').select('*').order('position', { ascending: true }),
           supabase.from('notes').select('*').order('created_at', { ascending: true }),
         ]);
         if (foldersRes.error) throw foldersRes.error;
@@ -30,6 +30,7 @@ export function useNotes() {
           id: f.id,
           name: f.name,
           parentId: f.parent_id,
+          position: f.position,
           createdAt: new Date(f.created_at).getTime(),
         })));
         setNotes(notesRes.data.map(n => ({
@@ -54,12 +55,14 @@ export function useNotes() {
   const activeNote = notes.find(n => n.id === activeNoteId) ?? null;
 
   const createFolder = useCallback(async (name: string, parentId: string | null = null) => {
-    const { data, error } = await supabase.from('folders').insert({ name, parent_id: parentId }).select().single();
+    // New folders get position at the end
+    const maxPos = folders.filter(f => f.parentId === parentId).reduce((max, f) => Math.max(max, f.position), -1);
+    const { data, error } = await supabase.from('folders').insert({ name, parent_id: parentId, position: maxPos + 1 }).select().single();
     if (error) { toast.error('Failed to create folder'); return; }
-    const folder: Folder = { id: data.id, name: data.name, parentId: data.parent_id, createdAt: new Date(data.created_at).getTime() };
+    const folder: Folder = { id: data.id, name: data.name, parentId: data.parent_id, position: data.position, createdAt: new Date(data.created_at).getTime() };
     setFolders(prev => [...prev, folder]);
     return folder;
-  }, []);
+  }, [folders]);
 
   const renameFolder = useCallback(async (id: string, name: string) => {
     const { error } = await supabase.from('folders').update({ name }).eq('id', id);
@@ -94,7 +97,7 @@ export function useNotes() {
     if (!toSortFolder) {
       const { data, error } = await supabase.from('folders').insert({ name: 'To Sort' }).select().single();
       if (error) { toast.error('Failed to create To Sort folder'); return; }
-      toSortFolder = { id: data.id, name: data.name, parentId: data.parent_id, createdAt: new Date(data.created_at).getTime() };
+      toSortFolder = { id: data.id, name: data.name, parentId: data.parent_id, position: data.position, createdAt: new Date(data.created_at).getTime() };
       setFolders(prev => [...prev, toSortFolder!]);
     }
 
@@ -231,14 +234,36 @@ export function useNotes() {
 
   const unfiledNotes = notes.filter(n => n.folderId === null);
   const getNotesByFolder = useCallback((folderId: string) => notes.filter(n => n.folderId === folderId), [notes]);
-  const getChildFolders = useCallback((parentId: string | null) => folders.filter(f => f.parentId === parentId), [folders]);
-  const getRootFolders = useCallback(() => folders.filter(f => f.parentId === null), [folders]);
+  const getChildFolders = useCallback((parentId: string | null) => 
+    folders.filter(f => f.parentId === parentId).sort((a, b) => a.position - b.position), [folders]);
+  const getRootFolders = useCallback(() => 
+    folders.filter(f => f.parentId === null).sort((a, b) => a.position - b.position), [folders]);
+
+  const reorderFolder = useCallback(async (folderId: string, newIndex: number, parentId: string | null) => {
+    const siblings = folders
+      .filter(f => f.parentId === parentId && f.id !== folderId)
+      .sort((a, b) => a.position - b.position);
+    
+    siblings.splice(newIndex, 0, folders.find(f => f.id === folderId)!);
+    const updates = siblings.map((f, i) => ({ id: f.id, position: i }));
+    
+    // Optimistic local update
+    setFolders(prev => prev.map(f => {
+      const u = updates.find(u => u.id === f.id);
+      return u ? { ...f, position: u.position } : f;
+    }));
+
+    // Persist to DB
+    for (const u of updates) {
+      await supabase.from('folders').update({ position: u.position }).eq('id', u.id);
+    }
+  }, [folders]);
 
   return {
     notes, folders, activeNote, activeNoteId, isLoading,
     setActiveNoteId, createFolder, renameFolder,
     deleteFolderAndContents, deleteFolderKeepNotes,
-    moveFolderToParent,
+    moveFolderToParent, reorderFolder,
     createNote, createNoteWithContent, updateNote, deleteNote, moveNoteToFolder,
     togglePin,
     addMedia, unfiledNotes, getNotesByFolder,

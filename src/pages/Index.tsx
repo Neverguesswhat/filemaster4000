@@ -14,7 +14,7 @@ const Index = () => {
   const {
     notes, folders, unfiledNotes, activeNote, activeNoteId,
     setActiveNoteId, createFolder,
-    deleteFolderAndContents, deleteFolderKeepNotes, moveFolderToParent,
+    deleteFolderAndContents, deleteFolderKeepNotes, moveFolderToParent, reorderFolder,
     createNote, createNoteWithContent, updateNote, deleteNote, moveNoteToFolder,
     togglePin,
     addMedia, getNotesByFolder, getChildFolders, getRootFolders, getDescendantFolderIds,
@@ -83,6 +83,7 @@ const Index = () => {
         onDeleteFolderAll={deleteFolderAndContents}
         onDeleteFolderKeep={deleteFolderKeepNotes}
         onMoveFolderToParent={moveFolderToParent}
+        onReorderFolder={reorderFolder}
         onSelectNote={setActiveNoteId}
         onCreateNote={createNote}
         onDeleteNote={deleteNote}
