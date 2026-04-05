@@ -97,7 +97,7 @@ export function useNotes() {
     if (!toSortFolder) {
       const { data, error } = await supabase.from('folders').insert({ name: 'To Sort' }).select().single();
       if (error) { toast.error('Failed to create To Sort folder'); return; }
-      toSortFolder = { id: data.id, name: data.name, parentId: data.parent_id, createdAt: new Date(data.created_at).getTime() };
+      toSortFolder = { id: data.id, name: data.name, parentId: data.parent_id, position: data.position, createdAt: new Date(data.created_at).getTime() };
       setFolders(prev => [...prev, toSortFolder!]);
     }
 
