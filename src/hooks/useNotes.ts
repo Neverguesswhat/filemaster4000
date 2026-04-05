@@ -234,14 +234,36 @@ export function useNotes() {
 
   const unfiledNotes = notes.filter(n => n.folderId === null);
   const getNotesByFolder = useCallback((folderId: string) => notes.filter(n => n.folderId === folderId), [notes]);
-  const getChildFolders = useCallback((parentId: string | null) => folders.filter(f => f.parentId === parentId), [folders]);
-  const getRootFolders = useCallback(() => folders.filter(f => f.parentId === null), [folders]);
+  const getChildFolders = useCallback((parentId: string | null) => 
+    folders.filter(f => f.parentId === parentId).sort((a, b) => a.position - b.position), [folders]);
+  const getRootFolders = useCallback(() => 
+    folders.filter(f => f.parentId === null).sort((a, b) => a.position - b.position), [folders]);
+
+  const reorderFolder = useCallback(async (folderId: string, newIndex: number, parentId: string | null) => {
+    const siblings = folders
+      .filter(f => f.parentId === parentId && f.id !== folderId)
+      .sort((a, b) => a.position - b.position);
+    
+    siblings.splice(newIndex, 0, folders.find(f => f.id === folderId)!);
+    const updates = siblings.map((f, i) => ({ id: f.id, position: i }));
+    
+    // Optimistic local update
+    setFolders(prev => prev.map(f => {
+      const u = updates.find(u => u.id === f.id);
+      return u ? { ...f, position: u.position } : f;
+    }));
+
+    // Persist to DB
+    for (const u of updates) {
+      await supabase.from('folders').update({ position: u.position }).eq('id', u.id);
+    }
+  }, [folders]);
 
   return {
     notes, folders, activeNote, activeNoteId, isLoading,
     setActiveNoteId, createFolder, renameFolder,
     deleteFolderAndContents, deleteFolderKeepNotes,
-    moveFolderToParent,
+    moveFolderToParent, reorderFolder,
     createNote, createNoteWithContent, updateNote, deleteNote, moveNoteToFolder,
     togglePin,
     addMedia, unfiledNotes, getNotesByFolder,
