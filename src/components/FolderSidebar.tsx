@@ -47,6 +47,7 @@ export function FolderSidebar({
 }: Props) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null);
+  const [dropIndicator, setDropIndicator] = useState<{ parentId: string | null; index: number } | null>(null);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [deletingFolder, setDeletingFolder] = useState<FolderType | null>(null);
