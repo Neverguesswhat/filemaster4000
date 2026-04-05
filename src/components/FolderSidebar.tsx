@@ -348,13 +348,15 @@ export function FolderSidebar({
               )}
 
               {/* Recursive folder tree */}
-              {rootFolders.map(folder => (
+              {rootFolders.map((folder, index) => (
                 <FolderItem
                   key={folder.id}
                   folder={folder}
+                  index={index}
                   depth={0}
                   expandedFolders={expandedFolders}
                   dragOverFolder={dragOverFolder}
+                  dropIndicator={dropIndicator}
                   activeNoteId={activeNoteId}
                   getNotesByFolder={getNotesByFolder}
                   getChildFolders={getChildFolders}
@@ -362,8 +364,9 @@ export function FolderSidebar({
                   allFolders={folders}
                   onToggle={toggleFolder}
                   onDrop={handleDrop}
+                  onFolderDragOver={handleFolderDragOver}
                   onDragOver={handleDragOver}
-                  onDragLeave={() => setDragOverFolder(null)}
+                  onDragLeave={() => { setDragOverFolder(null); setDropIndicator(null); }}
                   onCreateNote={onCreateNote}
                   onDeleteFolder={handleDeleteFolder}
                   onSelectNote={onSelectNote}
