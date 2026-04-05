@@ -168,9 +168,30 @@ export function FolderSidebar({
       onMoveNote(noteId, folderId);
       if (folderId) setExpandedFolders(prev => new Set([...prev, folderId]));
     } else if (dragFolderId && dragFolderId !== folderId) {
-      onMoveFolderToParent(dragFolderId, folderId);
+      // If dropping on a specific reorder position, use reorder
+      if (dropIndicator) {
+        const draggedFolder = folders.find(f => f.id === dragFolderId);
+        if (draggedFolder && draggedFolder.parentId === dropIndicator.parentId) {
+          onReorderFolder(dragFolderId, dropIndicator.index, dropIndicator.parentId);
+        } else {
+          onMoveFolderToParent(dragFolderId, folderId);
+        }
+      } else {
+        onMoveFolderToParent(dragFolderId, folderId);
+      }
       if (folderId) setExpandedFolders(prev => new Set([...prev, folderId]));
     }
+    setDragOverFolder(null);
+    setDropIndicator(null);
+  };
+
+  const handleFolderDragOver = (e: React.DragEvent, folder: FolderType, index: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const midY = rect.top + rect.height / 2;
+    const insertIndex = e.clientY < midY ? index : index + 1;
+    setDropIndicator({ parentId: folder.parentId, index: insertIndex });
     setDragOverFolder(null);
   };
 
