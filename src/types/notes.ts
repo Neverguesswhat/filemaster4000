@@ -12,6 +12,7 @@ export interface Folder {
   id: string;
   name: string;
   parentId: string | null;
+  position: number;
   createdAt: number;
 }
 
