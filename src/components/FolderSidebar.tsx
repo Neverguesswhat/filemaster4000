@@ -591,14 +591,14 @@ const FolderItem = forwardRef<HTMLDivElement, {
             className="p-0.5 hover:text-primary"
             title="New note in folder"
           >
-            <PlusIcon className="w-3 h-3" />
+            <PlusIcon className="w-4 h-4" />
           </button>
           <button
             onClick={e => { e.stopPropagation(); onDeleteFolder(folder); }}
             className="p-0.5 hover:text-destructive"
             title="Delete folder"
           >
-            <TrashIcon className="w-3 h-3" />
+            <TrashIcon className="w-4 h-4" />
           </button>
         </div>
       </div>
