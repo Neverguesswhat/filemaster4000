@@ -55,18 +55,21 @@ export type Database = {
           id: string
           name: string
           parent_id: string | null
+          position: number
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
           parent_id?: string | null
+          position?: number
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
           parent_id?: string | null
+          position?: number
         }
         Relationships: [
           {
