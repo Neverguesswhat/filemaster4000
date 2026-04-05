@@ -684,13 +684,13 @@ const NoteItem = forwardRef<HTMLDivElement, {
           className={`p-0.5 ${note.pinned ? 'text-primary' : 'hover:text-primary'}`}
           title={note.pinned ? 'Unpin' : 'Pin'}
         >
-          <MapPinIcon className="w-3 h-3" />
+          <MapPinIcon className="w-4 h-4" />
         </button>
         <button
           onClick={e => { e.stopPropagation(); onDelete(note.id); }}
           className="p-0.5 hover:text-destructive"
         >
-          <TrashIcon className="w-3 h-3" />
+          <TrashIcon className="w-4 h-4" />
         </button>
       </div>
     </div>
