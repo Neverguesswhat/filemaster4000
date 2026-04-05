@@ -503,9 +503,11 @@ export function FolderSidebar({
 // Recursive folder component - wrapped with forwardRef to fix console warning
 const FolderItem = forwardRef<HTMLDivElement, {
   folder: FolderType;
+  index: number;
   depth: number;
   expandedFolders: Set<string>;
   dragOverFolder: string | null;
+  dropIndicator: { parentId: string | null; index: number } | null;
   activeNoteId: string | null;
   getNotesByFolder: (id: string) => Note[];
   getChildFolders: (parentId: string | null) => FolderType[];
@@ -513,6 +515,7 @@ const FolderItem = forwardRef<HTMLDivElement, {
   allFolders: FolderType[];
   onToggle: (id: string) => void;
   onDrop: (e: React.DragEvent, folderId: string | null) => void;
+  onFolderDragOver: (e: React.DragEvent, folder: FolderType, index: number) => void;
   onDragOver: (e: React.DragEvent, folderId: string | null) => void;
   onDragLeave: () => void;
   onCreateNote: (folderId: string | null) => void;
@@ -521,9 +524,9 @@ const FolderItem = forwardRef<HTMLDivElement, {
   onDeleteNote: (id: string) => void;
   onTogglePin: (id: string) => void;
 }>(({
-  folder, depth, expandedFolders, dragOverFolder, activeNoteId,
+  folder, index, depth, expandedFolders, dragOverFolder, dropIndicator, activeNoteId,
   getNotesByFolder, getChildFolders, getDescendantFolderIds, allFolders,
-  onToggle, onDrop, onDragOver, onDragLeave,
+  onToggle, onDrop, onFolderDragOver, onDragOver, onDragLeave,
   onCreateNote, onDeleteFolder, onSelectNote, onDeleteNote, onTogglePin,
 }, ref) => {
   const folderNotes = getNotesByFolder(folder.id);
@@ -536,8 +539,14 @@ const FolderItem = forwardRef<HTMLDivElement, {
   const totalSubfolders = allDescendantIds.length;
   const totalFiles = [folder.id, ...allDescendantIds].reduce((sum, fid) => sum + getNotesByFolder(fid).length, 0);
 
+  const showDropBefore = dropIndicator?.parentId === folder.parentId && dropIndicator?.index === index;
+  const showDropAfter = dropIndicator?.parentId === folder.parentId && dropIndicator?.index === index + 1;
+
   return (
     <div ref={ref}>
+      {showDropBefore && (
+        <div className="mx-3 h-0.5 bg-primary rounded-full" style={{ marginLeft: 12 + depth * 16 }} />
+      )}
       <div
         draggable
         onDragStart={e => {
@@ -550,7 +559,7 @@ const FolderItem = forwardRef<HTMLDivElement, {
         style={{ paddingLeft }}
         onClick={() => onToggle(folder.id)}
         onDrop={e => onDrop(e, folder.id)}
-        onDragOver={e => onDragOver(e, folder.id)}
+        onDragOver={e => onFolderDragOver(e, folder, index)}
         onDragLeave={onDragLeave}
       >
         {isExpanded ? (
@@ -593,16 +602,21 @@ const FolderItem = forwardRef<HTMLDivElement, {
           </button>
         </div>
       </div>
+      {showDropAfter && (
+        <div className="mx-3 h-0.5 bg-primary rounded-full" style={{ marginLeft: 12 + depth * 16 }} />
+      )}
 
       {isExpanded && (
         <>
-          {childFolders.map(child => (
+          {childFolders.map((child, i) => (
             <FolderItem
               key={child.id}
               folder={child}
+              index={i}
               depth={depth + 1}
               expandedFolders={expandedFolders}
               dragOverFolder={dragOverFolder}
+              dropIndicator={dropIndicator}
               activeNoteId={activeNoteId}
               getNotesByFolder={getNotesByFolder}
               getChildFolders={getChildFolders}
@@ -610,6 +624,7 @@ const FolderItem = forwardRef<HTMLDivElement, {
               allFolders={allFolders}
               onToggle={onToggle}
               onDrop={onDrop}
+              onFolderDragOver={onFolderDragOver}
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
               onCreateNote={onCreateNote}
