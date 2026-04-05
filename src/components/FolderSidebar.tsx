@@ -19,6 +19,7 @@ interface Props {
   onDeleteFolderAll: (id: string) => void;
   onDeleteFolderKeep: (id: string, noteIds: string[]) => void;
   onMoveFolderToParent: (folderId: string, parentId: string | null) => void;
+  onReorderFolder: (folderId: string, newIndex: number, parentId: string | null) => void;
   onSelectNote: (id: string) => void;
   onCreateNote: (folderId: string | null) => void;
   onDeleteNote: (id: string) => void;
@@ -38,7 +39,7 @@ interface Props {
 export function FolderSidebar({
   folders, notes, unfiledNotes, getNotesByFolder, getChildFolders, getRootFolders,
   getDescendantFolderIds, activeNoteId,
-  onCreateFolder, onDeleteFolderAll, onDeleteFolderKeep, onMoveFolderToParent,
+  onCreateFolder, onDeleteFolderAll, onDeleteFolderKeep, onMoveFolderToParent, onReorderFolder,
   onSelectNote, onCreateNote, onDeleteNote, onMoveNote, onTogglePin,
   confirmDelete, onOpenSettings, onImportNote,
   isRecording, recordingTranscript, onStartRecording, onStopRecording,
