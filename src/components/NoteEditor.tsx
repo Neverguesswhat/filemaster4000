@@ -7,7 +7,8 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
-import { BoldIcon, ItalicIcon, StrikethroughIcon, CodeBracketIcon, ListBulletIcon, QueueListIcon, ChatBubbleBottomCenterTextIcon, MinusIcon, SparklesIcon, ArrowPathIcon, TableCellsIcon, ArrowDownTrayIcon, MapPinIcon, H1Icon, H2Icon, PhotoIcon } from '@heroicons/react/24/outline';
+import { BoldIcon, ItalicIcon, StrikethroughIcon, CodeBracketIcon, ListBulletIcon, QueueListIcon, ChatBubbleBottomCenterTextIcon, MinusIcon, SparklesIcon, ArrowPathIcon, TableCellsIcon, ArrowDownTrayIcon, H1Icon, H2Icon, PhotoIcon } from '@heroicons/react/24/outline';
+import { Pin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AISummaryPanel } from './AISummaryPanel';
@@ -214,7 +215,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, o
         <ToolbarButton
           active={note.pinned}
           onClick={() => onTogglePin(note.id)}
-          icon={<MapPinIcon className="w-4 h-4" />}
+          icon={<Pin className="w-4 h-4" />}
         />
         {/* Export dropdown */}
         <div className="relative">
