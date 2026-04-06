@@ -1,5 +1,6 @@
 import { useState, useCallback, forwardRef, useMemo, useRef } from 'react';
-import { FolderIcon, FolderOpenIcon, PlusIcon, DocumentTextIcon, TrashIcon, ChevronRightIcon, ChevronDownIcon, Cog6ToothIcon, MicrophoneIcon, StopIcon, MagnifyingGlassIcon, MapPinIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { FolderIcon, FolderOpenIcon, PlusIcon, DocumentTextIcon, TrashIcon, ChevronRightIcon, ChevronDownIcon, Cog6ToothIcon, MicrophoneIcon, StopIcon, MagnifyingGlassIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { Pin } from 'lucide-react';
 import { importFile } from '@/lib/importNote';
 import { toast } from 'sonner';
 import type { Folder as FolderType, Note } from '@/types/notes';
