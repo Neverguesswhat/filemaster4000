@@ -215,7 +215,7 @@ export function NoteEditor({ note, onUpdateTitle, onUpdateContent, onAddMedia, o
         <ToolbarButton
           active={note.pinned}
           onClick={() => onTogglePin(note.id)}
-          icon={<MapPinIcon className="w-4 h-4" />}
+          icon={<Pin className="w-4 h-4" />}
         />
         {/* Export dropdown */}
         <div className="relative">
