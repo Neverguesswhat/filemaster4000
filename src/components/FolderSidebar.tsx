@@ -206,14 +206,9 @@ export function FolderSidebar({
 
   return (
     <>
-      <aside className="w-[250px] min-w-[250px] h-screen bg-secondary border-r border-border flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 h-[41px] border-b border-border">
-          <h2 className="text-sm font-semibold text-foreground tracking-wide">File Master 4000</h2>
-        </div>
-
-        {/* Search with predictive dropdown */}
-        <div className="px-3 pt-2 pb-1">
+      <aside className="w-[250px] min-w-[250px] h-full bg-secondary border-r border-border flex flex-col overflow-hidden">
+        {/* Search bar at top */}
+        <div className="px-3 py-2 border-b border-border">
           <div className="relative">
             <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <input
@@ -267,6 +262,9 @@ export function FolderSidebar({
             )}
           </div>
         </div>
+
+
+
 
         <div className="flex-1 overflow-y-auto py-2 min-h-0">
           {/* Search results */}

@@ -7,8 +7,15 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsPanel } from '@/components/SettingsPanel';
-import { DocumentTextIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { FileText, FolderPlus } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Index = () => {
   const {
@@ -69,7 +76,33 @@ const Index = () => {
   });
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex flex-col h-screen w-full overflow-hidden">
+      {/* Top header bar */}
+      <div className="flex items-center h-[41px] min-h-[41px] border-b border-border bg-secondary">
+        <div className="w-[250px] min-w-[250px] px-4 flex items-center">
+          <h1 className="text-sm font-semibold text-foreground tracking-wide">File Master 4000</h1>
+        </div>
+        <div className="px-4 flex items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors outline-none">
+              New
+              <ChevronDownIcon className="w-3.5 h-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={() => createNote(null)} className="gap-2">
+                <FileText className="w-4 h-4" />
+                Note
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => createFolder('New Folder')} className="gap-2">
+                <FolderPlus className="w-4 h-4" />
+                Folder
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      <div className="flex flex-1 min-h-0 overflow-hidden">
       <FolderSidebar
         folders={folders}
         notes={notes}
@@ -135,6 +168,7 @@ const Index = () => {
         notes={notes}
         folders={folders}
       />
+      </div>
     </div>
   );
 };
