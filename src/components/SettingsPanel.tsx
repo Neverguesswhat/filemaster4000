@@ -51,7 +51,7 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
           </SheetTitle>
         </SheetHeader>
 
-        <div className="py-6 space-y-6">
+        <div className="py-6 space-y-6 overflow-y-auto max-h-[calc(100vh-5rem)]">
           {/* Theme */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Appearance</h3>
