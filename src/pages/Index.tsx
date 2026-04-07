@@ -168,6 +168,7 @@ const Index = () => {
         notes={notes}
         folders={folders}
       />
+      </div>
     </div>
   );
 };
