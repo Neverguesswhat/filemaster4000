@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Cog6ToothIcon, ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
@@ -43,7 +44,9 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
 
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <SheetContent className="sm:max-w-sm">
+      <SheetContent className="sm:max-w-sm p-0">
+        <ScrollArea className="h-full">
+          <div className="p-6">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2 text-sm">
             <Cog6ToothIcon className="w-4 h-4" />
@@ -51,7 +54,7 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
           </SheetTitle>
         </SheetHeader>
 
-        <div className="py-6 space-y-6 overflow-y-auto max-h-[calc(100vh-5rem)]">
+        <div className="py-6 space-y-6">
           {/* Theme */}
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Appearance</h3>
