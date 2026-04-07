@@ -385,7 +385,7 @@ export function FolderSidebar({
                       onClick={() => onCreateNote(null)}
                       className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
                     >
-                      <PlusIcon className="w-3 h-3" />
+                      <PlusIcon className="w-4 h-4" />
                     </button>
                   </div>
                   {unfiledNotes.map(note => (
