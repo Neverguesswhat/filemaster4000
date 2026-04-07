@@ -383,7 +383,8 @@ export function FolderSidebar({
                     <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Notes</h3>
                     <button
                       onClick={() => onCreateNote(null)}
-                      className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
+                      className="p-1 rounded text-primary hover:bg-accent transition-colors"
+                      title="Add note"
                     >
                       <PlusIcon className="w-4 h-4" />
                     </button>
