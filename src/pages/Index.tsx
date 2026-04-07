@@ -89,11 +89,11 @@ const Index = () => {
               <ChevronDownIcon className="w-3.5 h-3.5" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={() => createNote(null)} className="gap-2">
+              <DropdownMenuItem onClick={() => createNote(null)} className="gap-2 cursor-pointer">
                 <FileText className="w-4 h-4" />
                 Note
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => createFolder('New Folder')} className="gap-2">
+              <DropdownMenuItem onClick={() => createFolder('New Folder')} className="gap-2 cursor-pointer">
                 <FolderPlus className="w-4 h-4" />
                 Folder
               </DropdownMenuItem>
