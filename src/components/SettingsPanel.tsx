@@ -137,6 +137,8 @@ export function SettingsPanel({ open, onClose, confirmDelete, onToggleConfirmDel
             </div>
           </div>
         </div>
+          </div>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   );
