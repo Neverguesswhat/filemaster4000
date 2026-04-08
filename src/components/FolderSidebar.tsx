@@ -1,6 +1,7 @@
 import { useState, useCallback, forwardRef, useMemo, useRef } from 'react';
 import { FolderIcon, FolderOpenIcon, PlusIcon, DocumentTextIcon, TrashIcon, ChevronRightIcon, ChevronDownIcon, Cog6ToothIcon, MicrophoneIcon, StopIcon, MagnifyingGlassIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { Pin } from 'lucide-react';
+import { Pin, User } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { importFile } from '@/lib/importNote';
 import { toast } from 'sonner';
 import type { Folder as FolderType, Note } from '@/types/notes';
@@ -459,6 +460,14 @@ export function FolderSidebar({
             onChange={handleImportFile}
             className="hidden"
           />
+          <div className="flex items-center gap-2 px-3 py-2">
+            <Avatar className="h-7 w-7">
+              <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+                <User className="w-3.5 h-3.5" />
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-foreground">User</span>
+          </div>
           <button
             onClick={onOpenSettings}
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
