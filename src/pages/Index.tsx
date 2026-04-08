@@ -82,7 +82,7 @@ const Index = () => {
         <div className="w-[250px] min-w-[250px] px-4 flex items-center">
           <h1 className="text-sm font-semibold text-foreground tracking-wide">File Master 4000</h1>
         </div>
-        <div className="px-4 flex items-center flex-1">
+        <div className="px-4 flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors outline-none">
               New
@@ -103,15 +103,6 @@ const Index = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-        <div className="px-4 flex items-center gap-2">
-          <Avatar className="h-7 w-7">
-            <AvatarFallback className="bg-muted text-muted-foreground text-xs">
-              <User className="w-3.5 h-3.5" />
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-sm text-foreground">User</span>
-          <ChevronDownIcon className="w-3.5 h-3.5 text-muted-foreground" />
         </div>
       </div>
 
