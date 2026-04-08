@@ -98,6 +98,10 @@ const Index = () => {
                 <FolderPlus className="w-4 h-4" />
                 Folder
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleStartRecording} className="gap-2 cursor-pointer">
+                <Mic className="w-4 h-4" />
+                Voice Note
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
