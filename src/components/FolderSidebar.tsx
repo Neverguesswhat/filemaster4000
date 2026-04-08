@@ -400,14 +400,6 @@ export function FolderSidebar({
             onChange={handleImportFile}
             className="hidden"
           />
-          <div className="flex items-center gap-2 px-3 py-2">
-            <Avatar className="h-7 w-7">
-              <AvatarFallback className="bg-muted text-muted-foreground text-xs">
-                <User className="w-3.5 h-3.5" />
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-sm text-foreground">User</span>
-          </div>
           <button
             onClick={onOpenSettings}
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
@@ -416,6 +408,16 @@ export function FolderSidebar({
             <Cog6ToothIcon className="w-4 h-4" />
             Settings
           </button>
+          <div className="border-t border-border mt-1 pt-1">
+            <div className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
+              <Avatar className="h-7 w-7">
+                <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+                  <User className="w-3.5 h-3.5" />
+                </AvatarFallback>
+              </Avatar>
+              <span>User</span>
+            </div>
+          </div>
         </div>
       </aside>
 
