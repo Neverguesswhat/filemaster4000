@@ -1,7 +1,13 @@
 import { useState, useCallback, forwardRef, useMemo, useRef } from 'react';
-import { FolderIcon, FolderOpenIcon, PlusIcon, DocumentTextIcon, TrashIcon, ChevronRightIcon, ChevronDownIcon, Cog6ToothIcon, MicrophoneIcon, StopIcon, MagnifyingGlassIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import { Pin, User } from 'lucide-react';
+import { FolderIcon, FolderOpenIcon, PlusIcon, DocumentTextIcon, TrashIcon, ChevronRightIcon, ChevronDownIcon, Cog6ToothIcon, MicrophoneIcon, StopIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { Pin, User, FileText, FolderPlus, Mic, ChevronDown } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { importFile } from '@/lib/importNote';
 import { toast } from 'sonner';
 import type { Folder as FolderType, Note } from '@/types/notes';
