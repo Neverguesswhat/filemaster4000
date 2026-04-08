@@ -88,37 +88,6 @@ export function FolderSidebar({
     );
   }, [notes, searchQuery, isSearching]);
 
-  // Predictive suggestions (top 5 title matches)
-  const predictions = useMemo(() => {
-    if (!isSearching) return [];
-    const q = searchQuery.toLowerCase();
-    return notes
-      .filter(n => n.title.toLowerCase().includes(q))
-      .slice(0, 5);
-  }, [notes, searchQuery, isSearching]);
-
-  const handlePredictionSelect = useCallback((note: Note) => {
-    onSelectNote(note.id);
-    onSearchChange('');
-    setShowPredictions(false);
-    setSelectedPrediction(-1);
-  }, [onSelectNote, onSearchChange]);
-
-  const handleSearchKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (!showPredictions || predictions.length === 0) return;
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSelectedPrediction(prev => (prev + 1) % predictions.length);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedPrediction(prev => (prev <= 0 ? predictions.length - 1 : prev - 1));
-    } else if (e.key === 'Enter' && selectedPrediction >= 0) {
-      e.preventDefault();
-      handlePredictionSelect(predictions[selectedPrediction]);
-    } else if (e.key === 'Escape') {
-      setShowPredictions(false);
-    }
-  }, [showPredictions, predictions, selectedPrediction, handlePredictionSelect]);
   const pinnedNotes = useMemo(() => notes.filter(n => n.pinned), [notes]);
 
   const toggleFolder = (id: string) => {
