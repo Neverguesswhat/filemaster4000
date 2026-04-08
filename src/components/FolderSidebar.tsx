@@ -62,7 +62,6 @@ export function FolderSidebar({
   const [confirmDeleteNote, setConfirmDeleteNote] = useState<Note | null>(null);
   const [confirmDeleteEmptyFolder, setConfirmDeleteEmptyFolder] = useState<FolderType | null>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
-  const importInputRef = useRef<HTMLInputElement>(null);
 
   const handleImportFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -181,60 +180,28 @@ export function FolderSidebar({
   return (
     <>
       <aside className="w-[250px] min-w-[250px] h-full bg-secondary border-r border-border flex flex-col overflow-hidden">
-        {/* Search bar at top */}
+        {/* New dropdown at top */}
         <div className="px-3 py-2 border-b border-border">
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-            <input
-              ref={searchInputRef}
-              value={searchQuery}
-              onChange={e => {
-                onSearchChange(e.target.value);
-                setShowPredictions(true);
-                setSelectedPrediction(-1);
-              }}
-              onFocus={() => { if (searchQuery.trim()) setShowPredictions(true); }}
-              onBlur={() => setTimeout(() => setShowPredictions(false), 150)}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="Search notes… (⌘K)"
-              className="w-full pl-8 pr-7 py-1.5 text-sm bg-background border border-input rounded-md outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-ring"
-            />
-            {searchQuery && (
-              <button onClick={() => { onSearchChange(''); setShowPredictions(false); }} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                <XMarkIcon className="w-3.5 h-3.5" />
-              </button>
-            )}
-            {/* Predictive dropdown */}
-            {showPredictions && predictions.length > 0 && (
-              <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-popover border border-border rounded-md shadow-lg overflow-hidden">
-                {predictions.map((note, i) => {
-                  const q = searchQuery.toLowerCase();
-                  const title = note.title || 'Untitled';
-                  const idx = title.toLowerCase().indexOf(q);
-                  return (
-                    <button
-                      key={note.id}
-                      onMouseDown={e => { e.preventDefault(); handlePredictionSelect(note); }}
-                      className={`w-full flex items-center gap-2 px-3 py-1.5 text-sm text-left transition-colors ${
-                        i === selectedPrediction ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50 text-foreground'
-                      }`}
-                    >
-                      <DocumentTextIcon className="w-3.5 h-3.5 shrink-0 opacity-60" />
-                      <span className="truncate">
-                        {idx >= 0 ? (
-                          <>
-                            {title.slice(0, idx)}
-                            <span className="font-semibold text-primary">{title.slice(idx, idx + q.length)}</span>
-                            {title.slice(idx + q.length)}
-                          </>
-                        ) : title}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors outline-none">
+              New
+              <ChevronDown className="w-3.5 h-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={() => onCreateNote(null)} className="gap-2 cursor-pointer">
+                <FileText className="w-4 h-4" />
+                Note
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onCreateFolder('New Folder')} className="gap-2 cursor-pointer">
+                <FolderPlus className="w-4 h-4" />
+                Folder
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onStartRecording} className="gap-2 cursor-pointer">
+                <Mic className="w-4 h-4" />
+                Voice Note
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
 
