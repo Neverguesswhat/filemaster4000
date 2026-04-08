@@ -8,7 +8,7 @@ import { FolderSidebar } from '@/components/FolderSidebar';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsPanel } from '@/components/SettingsPanel';
 import { DocumentTextIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
-import { FileText, FolderPlus, User } from 'lucide-react';
+import { FileText, FolderPlus, Mic, User } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from 'sonner';
 import {
