@@ -410,11 +410,7 @@ export function FolderSidebar({
           </button>
           <div className="border-t border-border mt-1 pt-1">
             <div className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
-              <Avatar className="h-7 w-7">
-                <AvatarFallback className="bg-muted text-muted-foreground text-xs">
-                  <User className="w-3.5 h-3.5" />
-                </AvatarFallback>
-              </Avatar>
+              <User className="w-4 h-4" />
               <span>User</span>
             </div>
           </div>
